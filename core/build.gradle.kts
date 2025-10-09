@@ -64,6 +64,10 @@ kotlin {
                 // Add KMP dependencies here
 
                 implementation(libs.bundles.ktor)
+                implementation(libs.ktor.cio)
+                implementation(libs.ktor.slf)
+
+                api(libs.koin.core)
             }
         }
 

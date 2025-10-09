@@ -36,6 +36,7 @@ runner = "1.7.0"
 sqlite = "2.5.0-SNAPSHOT"
 turbine = "0.7.0"
 jetbrainsKotlinJvm = "2.2.20"
+slf = "2.0.9"
 
 [libraries]
 #Common
@@ -59,6 +60,9 @@ ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-ios = { module = "io.ktor:ktor-client-ios", version.ref = "ktor" }
+ktor-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor"}
+ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor"}
+ktor-slf = { module = "org.slf4j:slf4j-simple", version.ref = "slf"}
 
 # Room
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
@@ -119,4 +123,5 @@ ktor = [
     "ktor-client-content-negotiation",
     "ktor-client-core",
     "ktor-serialization-kotlinx-json",
+    "ktor-logging",
 ]
