@@ -30,6 +30,7 @@ kotlinx-coroutines-test = "1.9.0"
 kotlinx-serialization = "1.7.3"
 ksp = "2.0.21-1.0.25"
 ktor = "3.0.0"
+napier = "2.7.1"
 room = "2.7.0-alpha11"
 runner = "1.7.0"
 sqlite = "2.5.0-SNAPSHOT"
@@ -94,6 +95,7 @@ test-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 # Misc
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometry" }
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 
 [plugins]

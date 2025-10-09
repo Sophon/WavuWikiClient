@@ -5,6 +5,7 @@ plugins {
 }
 
 kotlin {
+    jvm()
 
     // Target declarations - add or remove as needed below. These define
     // which platforms this KMP module supports.
@@ -61,6 +62,8 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.stdlib)
                 // Add KMP dependencies here
+
+                implementation(libs.bundles.ktor)
             }
         }
 
@@ -96,5 +99,4 @@ kotlin {
             }
         }
     }
-
 }

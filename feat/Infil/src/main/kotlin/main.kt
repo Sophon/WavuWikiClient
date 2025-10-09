@@ -1,4 +1,10 @@
+import kotlinx.coroutines.coroutineScope
 
-fun main() {
-    println("Hello world")
+suspend fun main() = coroutineScope {
+    val glossary = InfilGlossary()
+
+    glossary.start()
+        .collect {
+            println(it)
+        }
 }
