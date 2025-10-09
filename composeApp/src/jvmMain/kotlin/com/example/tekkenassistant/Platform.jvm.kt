@@ -1,4 +1,4 @@
-package com.example.heihachireborn
+package com.example.tekkenassistant
 
 class JVMPlatform: Platform {
     override val name: String = "Java ${System.getProperty("java.version")}"

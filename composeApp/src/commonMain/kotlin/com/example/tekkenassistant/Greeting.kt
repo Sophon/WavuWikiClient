@@ -1,4 +1,4 @@
-package com.example.heihachireborn
+package com.example.tekkenassistant
 
 class Greeting {
     private val platform = getPlatform()

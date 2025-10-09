@@ -1,4 +1,4 @@
-package com.example.heihachireborn
+package com.example.tekkenassistant
 
 import android.os.Build
 

@@ -1,4 +1,4 @@
-package com.example.heihachireborn
+package com.example.tekkenassistant
 
 import androidx.compose.ui.window.ComposeUIViewController
 

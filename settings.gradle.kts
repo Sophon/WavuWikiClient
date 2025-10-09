@@ -1,4 +1,4 @@
-rootProject.name = "HeihachiReborn"
+rootProject.name = "TekkenAssistant"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

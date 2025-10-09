@@ -53,11 +53,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.example.heihachireborn"
+    namespace = "com.example.tekkenassistant"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.example.heihachireborn"
+        applicationId = "com.example.tekkenassistant"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -85,11 +85,11 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "com.example.heihachireborn.MainKt"
+        mainClass = "com.example.tekkenassistant.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.example.heihachireborn"
+            packageName = "com.example.tekkenassistant"
             packageVersion = "1.0.0"
         }
     }
