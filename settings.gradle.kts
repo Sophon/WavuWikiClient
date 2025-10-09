@@ -34,4 +34,3 @@ plugins {
 
 include(":composeApp")
 include(":core")
-include(":dcBot")
