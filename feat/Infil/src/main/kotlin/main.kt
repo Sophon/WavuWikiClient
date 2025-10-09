@@ -19,7 +19,7 @@ suspend fun main() = coroutineScope {
 
     infilGlossary.fetchGlossary()
 
-    infilGlossary.search("Fire ball").also { items ->
+    infilGlossary.search("Block damage").also { items ->
         println(items.map { it.term })
     }
 

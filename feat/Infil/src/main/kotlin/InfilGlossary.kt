@@ -31,7 +31,14 @@ internal class InfilGlossaryImpl(
     override suspend fun fetchGlossary() {
         getGlossaryUseCase.execute()
             .onSuccess { items ->
-                glossary = items.associateBy { it.term }
+                glossary = buildMap {
+                    items.forEach { item ->
+                        put(item.term, item) //use main term
+                        item.altTerm.forEach { alt -> //alt term
+                            put(alt, item)
+                        }
+                    }
+                }
                 outputStream.emit("Successfully retrieved: ${glossary.size}")
             }
             .onError { errorType ->
