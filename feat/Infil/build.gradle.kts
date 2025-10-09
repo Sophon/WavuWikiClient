@@ -1,6 +1,7 @@
 plugins {
     id("java-library")
     alias(libs.plugins.jetbrainsKotlinJvm)
+    alias(libs.plugins.kotlinSerialization)
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -16,7 +17,6 @@ dependencies {
     implementation(project(":core"))
 
     implementation(libs.bundles.ktor)
-    implementation(libs.kotlinx.serialization.json)
     implementation(libs.napier)
 
     api(libs.koin.core)

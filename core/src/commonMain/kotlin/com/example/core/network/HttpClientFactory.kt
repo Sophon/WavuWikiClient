@@ -23,12 +23,13 @@ object HttpClientFactory {
                 level = LogLevel.ALL
             }
 
-            install(
-                plugin = ContentNegotiation,
-                configure = {
-                    json(json = Json(builderAction = { ignoreUnknownKeys = true }))
-                }
-            )
+            install(ContentNegotiation) {
+                json(
+                    Json {
+                        ignoreUnknownKeys = true
+                    }
+                )
+            }
 
             install(
                 plugin = HttpTimeout,
