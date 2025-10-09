@@ -39,7 +39,7 @@ internal class InfilGlossaryImpl(
                         }
                     }
                 }
-                outputStream.emit("Successfully retrieved: ${glossary.size}")
+                outputStream.emit("Successfully retrieved: ${items.size}")
             }
             .onError { errorType ->
                 Napier.e(tag = TAG) { "Error: $errorType" }
