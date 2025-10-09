@@ -10,4 +10,5 @@ data class Item(
     val videos: List<String>, //TODO: refactor
     val games: List<String>,
     @SerialName("jp") val jpTranslation: String,
+    @SerialName("altterm") val altTerm: List<String>?,
 )

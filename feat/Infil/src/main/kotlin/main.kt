@@ -1,10 +1,21 @@
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.getKoin
 
 suspend fun main() = coroutineScope {
-    val glossary = InfilGlossary()
+    initKoin()
+    Napier.base(DebugAntilog())
 
-    glossary.start()
-        .collect {
-            println(it)
-        }
+    val infilGlossary = getKoin().get<InfilGlossary>()
+
+    launch {
+        infilGlossary.subscribe()
+            .collect {
+                println(it)
+            }
+    }
+
+    infilGlossary.fetchGlossary()
 }
