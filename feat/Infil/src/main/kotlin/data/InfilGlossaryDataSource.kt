@@ -5,17 +5,17 @@ import io.ktor.client.HttpClient
 import com.example.core.domain.DataError
 import com.example.core.domain.Result
 import com.example.core.network.safeCall
-import domain.Item
+import domain.GlossaryItem
 import io.ktor.client.request.get
 
-interface InfilGlossaryDataSource {
-    suspend fun getGlossary(): Result<List<Item>, DataError.Remote>
+internal interface InfilGlossaryDataSource {
+    suspend fun getGlossary(): Result<List<GlossaryItem>, DataError.Remote>
 }
 
-class InfilGlossaryDataSourceImpl(
+internal class InfilGlossaryDataSourceImpl(
     private val httpClient: HttpClient
 ): InfilGlossaryDataSource {
-    override suspend fun getGlossary(): Result<List<Item>, DataError.Remote> {
+    override suspend fun getGlossary(): Result<List<GlossaryItem>, DataError.Remote> {
         return safeCall { httpClient.get(BASE_URL) }
     }
 }

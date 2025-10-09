@@ -21,7 +21,7 @@ fun initKoin(config: KoinAppDeclaration? = null) = startKoin {
 val infilModule = module {
     singleOf(::InfilGlossaryDataSourceImpl).bind<InfilGlossaryDataSource>()
 
-    singleOf(::InfilGlossary)
+    singleOf(::InfilGlossaryImpl).bind<InfilGlossary>()
 
     singleOf(::GetGlossaryUseCase)
 }

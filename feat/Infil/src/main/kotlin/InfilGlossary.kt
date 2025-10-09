@@ -1,18 +1,25 @@
 import com.example.core.domain.onError
 import com.example.core.domain.onSuccess
+import com.example.core.util.removeWhiteSpace
 import domain.GetGlossaryUseCase
-import domain.Item
+import domain.GlossaryItem
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class InfilGlossary(
-    private val getGlossaryUseCase: GetGlossaryUseCase,
-) {
-    private val outputStream = MutableStateFlow("")
-    private val glossary = mutableListOf<Item>()
+interface InfilGlossary {
+    suspend fun subscribe(): Flow<String>
+    suspend fun fetchGlossary()
+    fun search(query: String): List<GlossaryItem>
+}
 
-    suspend fun subscribe(): Flow<String> {
+internal class InfilGlossaryImpl(
+    private val getGlossaryUseCase: GetGlossaryUseCase,
+): InfilGlossary {
+    private val outputStream = MutableStateFlow("")
+    private var glossary: Map<String, GlossaryItem> = emptyMap()
+
+    override suspend fun subscribe(): Flow<String> {
         val string = "Starting Infil Glossary"
         Napier.d(tag = TAG, message = string)
 
@@ -21,16 +28,25 @@ class InfilGlossary(
         }
     }
 
-    suspend fun fetchGlossary() {
+    override suspend fun fetchGlossary() {
         getGlossaryUseCase.execute()
             .onSuccess { items ->
-                glossary.addAll(items)
+                glossary = items.associateBy { it.term }
                 outputStream.emit("Successfully retrieved: ${glossary.size}")
             }
             .onError { errorType ->
                 Napier.e(tag = TAG) { "Error: $errorType" }
                 outputStream.emit("Error: $errorType")
             }
+    }
+
+    override fun search(query: String): List<GlossaryItem> {
+        return glossary.entries
+            .filter {
+                it.key.contains(query, ignoreCase = true)
+                        || it.key.contains(query.removeWhiteSpace(), ignoreCase = true)
+            }
+            .map { it.value }
     }
 }
 

@@ -4,10 +4,10 @@ import com.example.core.domain.DataError
 import com.example.core.domain.Result
 import data.InfilGlossaryDataSource
 
-class GetGlossaryUseCase(
+internal class GetGlossaryUseCase(
     private val dataSource: InfilGlossaryDataSource,
 ) {
-    suspend fun execute(): Result<List<Item>, DataError.Remote> {
+    suspend fun execute(): Result<List<GlossaryItem>, DataError.Remote> {
         return dataSource.getGlossary()
     }
 }

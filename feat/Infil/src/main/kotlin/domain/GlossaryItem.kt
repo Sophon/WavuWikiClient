@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Item(
+data class GlossaryItem(
     val term: String,
     @SerialName("def") val definition: String,
     @SerialName("altterm") val altTerm: List<String> = listOf(),
