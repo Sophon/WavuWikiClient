@@ -1,4 +1,4 @@
-rootProject.name = "HeihachiReborn"
+rootProject.name = "TekkenAssistant"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -34,4 +34,5 @@ plugins {
 
 include(":composeApp")
 include(":core")
-include(":dcBot")
+include(":feat:Infil")
+include(":feat:dcBot")

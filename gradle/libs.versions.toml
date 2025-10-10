@@ -30,10 +30,13 @@ kotlinx-coroutines-test = "1.9.0"
 kotlinx-serialization = "1.7.3"
 ksp = "2.0.21-1.0.25"
 ktor = "3.0.0"
+napier = "2.7.1"
 room = "2.7.0-alpha11"
 runner = "1.7.0"
 sqlite = "2.5.0-SNAPSHOT"
 turbine = "0.7.0"
+jetbrainsKotlinJvm = "2.2.20"
+slf = "2.0.9"
 
 [libraries]
 #Common
@@ -57,6 +60,9 @@ ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-ios = { module = "io.ktor:ktor-client-ios", version.ref = "ktor" }
+ktor-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor"}
+ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor"}
+ktor-slf = { module = "org.slf4j:slf4j-simple", version.ref = "slf"}
 
 # Room
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
@@ -93,6 +99,7 @@ test-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 # Misc
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometry" }
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 
 [plugins]
@@ -108,6 +115,7 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
+jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 
 
 [bundles]
@@ -115,4 +123,5 @@ ktor = [
     "ktor-client-content-negotiation",
     "ktor-client-core",
     "ktor-serialization-kotlinx-json",
+    "ktor-logging",
 ]
