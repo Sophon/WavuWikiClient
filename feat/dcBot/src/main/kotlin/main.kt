@@ -13,11 +13,16 @@ suspend fun main() = coroutineScope {
     val heihachi = getKoin().get<HeihachiReborn>()
 
     launch {
-        heihachi.subscribe()
+        heihachi
+            .subscribeToEvents()
             .collect {
                 println(it)
             }
     }
+
+    launch { heihachi.startKord() }
+
+    println("after")
 
 
     Unit
