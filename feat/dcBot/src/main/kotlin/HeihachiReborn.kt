@@ -1,14 +1,20 @@
 import dev.kord.core.Kord
+import dev.kord.core.event.Event
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
+import util.removeTag
 
 interface HeihachiReborn {
     suspend fun subscribeToEvents(): Flow<String>
     suspend fun startKord()
+    suspend fun startSession()
 }
 
 class HeihachiRebornImpl(
@@ -17,6 +23,11 @@ class HeihachiRebornImpl(
     private val events = MutableStateFlow("") //TODO: flow of events instead of string
     private lateinit var kord: Kord
 
+
+    override suspend fun startSession() {
+        //kord stuff
+        //glossary stuff
+    }
 
     override suspend fun subscribeToEvents(): Flow<String> {
         return events.apply {
@@ -37,16 +48,21 @@ class HeihachiRebornImpl(
             }
 
             if (kord.selfId in message.mentionedUserIds) {
-                message.channel.createMessage("Hi!")
-                events.emit("I was tagged!")
+                message.channel.createMessage(message.content.removeTag())
             }
         }
 
-        //!! THIS SUSPENDS UNTIL LOGGED OUT
-        kord.login {
-            // we need to specify this to receive the content of messages
-            @OptIn(PrivilegedIntent::class)
-            intents += Intent.MessageContent
+        //‼️ THIS SUSPENDS UNTIL LOGGED OUT
+        coroutineScope {
+            launch {
+                kord.login {
+                    // we need to specify this to receive the content of messages
+                    @OptIn(PrivilegedIntent::class)
+                    intents += Intent.MessageContent
+                }
+            }
         }
     }
 }
+
+private const val TAG = "HeihachiRebornBot"
