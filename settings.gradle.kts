@@ -35,3 +35,4 @@ plugins {
 include(":composeApp")
 include(":core")
 include(":feat:Infil")
+include(":feat:dcBot")
