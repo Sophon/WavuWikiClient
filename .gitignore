@@ -204,3 +204,4 @@ lint/tmp/
 /.kotlin/metadata/kotlinTransformedMetadataLibraries/org.jetbrains.skiko-skiko-0.9.22.2-nativeJsMain-TAlWDg.klib
 /.kotlin/metadata/kotlinTransformedMetadataLibraries/org.jetbrains.skiko-skiko-0.9.22.2-nativeMain-TAlWDg.klib
 /.kotlin/metadata/kotlinTransformedMetadataLibraries/org.jetbrains.skiko-skiko-0.9.22.2-uikitMain-SvRtdQ.klib
+/feat/dcBot/config.json

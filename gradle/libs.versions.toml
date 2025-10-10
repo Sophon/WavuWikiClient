@@ -14,7 +14,7 @@ androidx-lifecycle = "2.9.4"
 androidx-testExt = "1.3.0"
 assertK = "0.25"
 biometry = "1.1.0"
-buildkonfig = "0.17.0"
+buildkonfig = "0.17.1"
 coil-compose = "3.0.0"
 compose-test = "1.7.6"
 composeHotReload = "1.0.0-beta07"
@@ -23,6 +23,7 @@ core = "1.7.0"
 core-ktx = "1.7.0"
 junit = "4.13.2"
 koin = "4.0.0"
+kord = "0.17.0"
 kotlin-date-time = "0.6.1"
 kotlinStdlib = "2.2.20"
 kotlinx-coroutines = "1.10.2"
@@ -33,10 +34,10 @@ ktor = "3.0.0"
 napier = "2.7.1"
 room = "2.7.0-alpha11"
 runner = "1.7.0"
+slf = "2.0.9"
 sqlite = "2.5.0-SNAPSHOT"
 turbine = "0.7.0"
 jetbrainsKotlinJvm = "2.2.20"
-slf = "2.0.9"
 
 [libraries]
 #Common
@@ -99,6 +100,7 @@ test-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 # Misc
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometry" }
+kord = { module = "dev.kord:kord-core", version.ref = "kord"}
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 
