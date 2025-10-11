@@ -16,6 +16,7 @@ kotlin {
 dependencies {
     implementation(project(":core"))
     implementation(project(":feat:Infil"))
+    implementation(project(":feat:wavu"))
 
     implementation(libs.napier)
     implementation(libs.kord)
