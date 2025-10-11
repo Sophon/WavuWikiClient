@@ -5,12 +5,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Move(
     val id: String,
-    val name: String,
     val input: String,
-    val parent: String,
-    val target: String,
-    val damage: String,
-    val startup: String,
+    val target: String, //TODO: hml sl sm etc
+    val name: String? = null,
+    val parent: String? = null,
+    val damage: String? = null,
+    val startup: String? = null,
     val recv: String? = null,
     val tot: String? = null,
     val crush: String? = null,
@@ -22,5 +22,5 @@ data class Move(
     val image: String? = null,
     val video: String? = null,
     val alt: String? = null,
-    val ns: String,
+    val ns: String? = null, //TODO: what is this
 )

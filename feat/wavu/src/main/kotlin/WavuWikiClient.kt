@@ -11,10 +11,10 @@ internal class WavuWikiClientImpl(
     private val fetchMoveListUseCase: FetchMoveListUseCase,
 ): WavuWikiClient {
 //    private val characters: List<Character>
-
-    init {
+//
+//    init {
 //        characters = fetchCharacters()
-    }
+//    }
 
     override suspend fun frameData(query: String) {
         fetchMoveListUseCase.execute(query)

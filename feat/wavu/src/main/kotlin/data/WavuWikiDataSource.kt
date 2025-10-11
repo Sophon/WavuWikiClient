@@ -10,13 +10,13 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
 internal interface WavuWikiDataSource {
-    suspend fun fetchMoveList(char: String): Result<List<Move>, DataError.Remote>
+    suspend fun fetchMoveList(char: String): Result<MoveListResponseDto, DataError.Remote>
 }
 
 internal class WavuWikiDataSourceImpl(
     private val httpClient: HttpClient,
 ): WavuWikiDataSource {
-    override suspend fun fetchMoveList(char: String): Result<List<Move>, DataError.Remote> {
+    override suspend fun fetchMoveList(char: String): Result<MoveListResponseDto, DataError.Remote> {
         return safeCall {
             httpClient.get(BASE_URL) {
                 parameter("action", "cargoquery")
