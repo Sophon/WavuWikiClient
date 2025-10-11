@@ -18,7 +18,7 @@ internal class WavuWikiDataSourceImpl(
 ): WavuWikiDataSource {
     override suspend fun fetchMoveList(char: String): Result<List<Move>, DataError.Remote> {
         return safeCall {
-            httpClient.get("$BASE_URL/w/api.php") {
+            httpClient.get(BASE_URL) {
                 parameter("action", "cargoquery")
                 parameter("tables", "Move")
                 parameter("where", "id LIKE '$char%'")
