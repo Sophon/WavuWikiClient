@@ -4,18 +4,19 @@ import BASE_URL
 import com.example.core.domain.DataError
 import com.example.core.domain.Result
 import com.example.core.network.safeCall
+import domain.model.Move
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
 internal interface WavuWikiDataSource {
-    suspend fun fetchMovelist(char: String): Result<String, DataError.Remote>
+    suspend fun fetchMoveList(char: String): Result<List<Move>, DataError.Remote>
 }
 
 internal class WavuWikiDataSourceImpl(
     private val httpClient: HttpClient,
 ): WavuWikiDataSource {
-    override suspend fun fetchMovelist(char: String): Result<String, DataError.Remote> {
+    override suspend fun fetchMoveList(char: String): Result<List<Move>, DataError.Remote> {
         return safeCall {
             httpClient.get("$BASE_URL/w/api.php") {
                 parameter("action", "cargoquery")
