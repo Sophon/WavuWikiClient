@@ -13,8 +13,8 @@ fun initKoin(
     config?.invoke(this)
 
     modules(
-        dcBotModule(apiKey),
         coreModule,
+        dcBotModule(apiKey),
         infilModule,
     )
 }

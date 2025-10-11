@@ -29,6 +29,8 @@ internal class InfilGlossaryImpl(
     }
 
     override suspend fun fetchGlossary() {
+        Napier.d(tag = TAG) { "Fetching glossary" }
+
         getGlossaryUseCase.execute()
             .onSuccess { items ->
                 glossary = buildMap {
@@ -39,7 +41,7 @@ internal class InfilGlossaryImpl(
                         }
                     }
                 }
-                outputStream.emit("Successfully retrieved: ${items.size}")
+                Napier.d(tag = TAG) { "Successfully retrieved glossary; ${items.size} keys" }
             }
             .onError { errorType ->
                 Napier.e(tag = TAG) { "Error: $errorType" }
@@ -48,6 +50,8 @@ internal class InfilGlossaryImpl(
     }
 
     override fun search(query: String): List<GlossaryItem> {
+        Napier.d(tag = TAG) { "Query: $query" }
+
         return glossary.entries
             .filter {
                 it.key.contains(query, ignoreCase = true)

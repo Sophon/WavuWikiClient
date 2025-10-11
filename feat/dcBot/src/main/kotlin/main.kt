@@ -1,4 +1,6 @@
 import domain.DcConfig
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -7,25 +9,14 @@ import java.io.File
 
 suspend fun main() = coroutineScope {
     val apiKey = getApiKey()
-
+    Napier.base(DebugAntilog())
     initKoin(apiKey)
 
     val heihachi = getKoin().get<HeihachiReborn>()
 
     launch {
-        heihachi
-            .subscribeToEvents()
-            .collect {
-                println(it)
-            }
-    }
-
-    launch { heihachi.startKord() }
-
-    println("after")
-
-
-    Unit
+        heihachi.startSession()
+    }.join()
 }
 
 private fun getApiKey(): String {

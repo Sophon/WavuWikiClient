@@ -1,41 +1,42 @@
+import com.example.core.domain.onError
+import com.example.core.domain.onSuccess
 import dev.kord.core.Kord
 import dev.kord.core.event.Event
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
+import domain.SearchGlossaryUseCase
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import util.removeTag
+import kotlin.time.Duration.Companion.seconds
 
 interface HeihachiReborn {
-    suspend fun subscribeToEvents(): Flow<String>
-    suspend fun startKord()
     suspend fun startSession()
 }
 
-class HeihachiRebornImpl(
+internal class HeihachiRebornImpl(
     private val apiKey: String,
+    private val searchGlossaryUseCase: SearchGlossaryUseCase,
 ): HeihachiReborn {
     private val events = MutableStateFlow("") //TODO: flow of events instead of string
     private lateinit var kord: Kord
 
 
     override suspend fun startSession() {
-        //kord stuff
-        //glossary stuff
+        Napier.d(tag = TAG) { "Starting with API: $apiKey" }
+
+        searchGlossaryUseCase.startGlossary()
+        startKord()
     }
 
-    override suspend fun subscribeToEvents(): Flow<String> {
-        return events.apply {
-            emit("API key: $apiKey")
-        }
-    }
-
-    override suspend fun startKord() {
+    private suspend fun startKord() {
         kord = Kord(token = apiKey)
 
         kord.on<MessageCreateEvent> {
@@ -48,19 +49,21 @@ class HeihachiRebornImpl(
             }
 
             if (kord.selfId in message.mentionedUserIds) {
-                message.channel.createMessage(message.content.removeTag())
+                searchGlossaryUseCase.search(message.content.removeTag())
+                    .onSuccess { glossaryItems ->
+                        message.channel.createMessage(glossaryItems.firstOrNull()?.definition ?: "not found")
+                    }
+                    .onError { error ->
+                        Napier.e(tag = TAG) { "Error: $error" }
+                    }
             }
         }
 
         //‼️ THIS SUSPENDS UNTIL LOGGED OUT
-        coroutineScope {
-            launch {
-                kord.login {
-                    // we need to specify this to receive the content of messages
-                    @OptIn(PrivilegedIntent::class)
-                    intents += Intent.MessageContent
-                }
-            }
+        kord.login {
+            // we need to specify this to receive the content of messages
+            @OptIn(PrivilegedIntent::class)
+            intents += Intent.MessageContent
         }
     }
 }
