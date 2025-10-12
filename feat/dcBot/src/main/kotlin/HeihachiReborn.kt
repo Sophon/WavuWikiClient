@@ -10,7 +10,10 @@ import domain.BotError
 import domain.SearchFrameDataUseCase
 import domain.SearchGlossaryUseCase
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import util.removeTag
 
 interface HeihachiReborn {
@@ -29,9 +32,10 @@ internal class HeihachiRebornImpl(
     override suspend fun startSession() {
         Napier.d(tag = TAG) { "Starting with API: $apiKey" }
 
-        //TODO: do the two starts concurrently
-        searchGlossaryUseCase.startGlossary()
-        searchFrameDataUseCase.startWiki()
+        coroutineScope {
+            launch { searchGlossaryUseCase.startGlossary() }
+            launch { searchFrameDataUseCase.startWiki() }
+        }
         startKord()
     }
 
