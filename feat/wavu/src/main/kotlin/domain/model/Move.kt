@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class Move(
     val id: String,
     val input: String,
-    val target: String, //TODO: hml sl sm etc
+    val target: String? = null, //TODO: hml sl sm etc
     val name: String? = null,
     val parent: String? = null,
     val damage: String? = null,

@@ -1,8 +1,11 @@
 import com.example.core.domain.Result
 import domain.FetchMoveListUseCase
 import domain.model.Character
+import domain.model.CharacterList
 import domain.model.Move
 import io.github.aakira.napier.Napier
+import kotlinx.serialization.json.Json
+import java.io.File
 
 interface WavuWikiClient {
     suspend fun fetchCompleteMoveList()
@@ -13,6 +16,9 @@ interface WavuWikiClient {
 internal class WavuWikiClientImpl(
     private val fetchMoveListUseCase: FetchMoveListUseCase,
 ): WavuWikiClient {
+    val json = Json {
+        ignoreUnknownKeys = true
+    }
     private var database: MutableMap<String, Map<String, Move>> = mutableMapOf()
 
     override suspend fun fetchCompleteMoveList() {
@@ -28,9 +34,7 @@ internal class WavuWikiClientImpl(
         val result = fetchMoveListUseCase.execute(character.name)
         return when (result) {
             is Result.Success -> {
-                result.data.also { moveList ->
-                    Napier.d(tag = TAG) { "Success; ${moveList.size} moves for char $character" }
-                }
+                result.data
             }
             is Result.Error -> {
                 Napier.e(tag = TAG) { "Error: ${result.error}" }
@@ -45,10 +49,9 @@ internal class WavuWikiClientImpl(
 
 
     private fun fetchCharacters(): List<Character> {
-        //TODO: load from the config.json
-        return listOf(
-
-        )
+        val configFile = File(CONFIG_FILE)
+        val charList = json.decodeFromString<CharacterList>(configFile.readText())
+        return charList.characterList
     }
 }
 

@@ -9,8 +9,13 @@ suspend fun main() = coroutineScope {
     Napier.base(DebugAntilog())
     val client = getKoin().get<WavuWikiClient>()
 
-    client.frameData(TEST_CHAR)
+    client.fetchCompleteMoveList()
+
+    println("========")
+
+    val move = client.frameDataFor(
+        charName = "Kazuya",
+        move = "1,1,2"
+    )
+    println("\n\n\ndata: $move")
 }
-
-
-private const val TEST_CHAR = "Kaz"
