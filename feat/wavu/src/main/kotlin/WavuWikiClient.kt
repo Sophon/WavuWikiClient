@@ -24,8 +24,13 @@ internal class WavuWikiClientImpl(
     override suspend fun fetchCompleteMoveList() {
         fetchCharacters().forEach { character ->
             fetchMoveListFor(character)?.let { moveList ->
-                database.put(key = character.name, value = moveList)
-                Napier.d(tag = TAG) { "${moveList.size} moves for ${character.name} added" }
+                insertMoveListIntoDatabase(
+                    character = character,
+                    moveList = moveList
+                )
+                Napier.d(tag = TAG) {
+                    "${moveList.size} moves for ${character.name} (${character.alias}) added"
+                }
             }
         }
     }
@@ -52,6 +57,14 @@ internal class WavuWikiClientImpl(
         val configFile = File(CONFIG_FILE)
         val charList = json.decodeFromString<CharacterList>(configFile.readText())
         return charList.characterList
+    }
+
+    private fun insertMoveListIntoDatabase(
+        character: Character,
+        moveList: Map<String, Move>,
+    ) {
+        database.put(key = character.name, value = moveList)
+        character.alias.forEach { alias -> database[alias] = moveList }
     }
 }
 
