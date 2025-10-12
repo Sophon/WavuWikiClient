@@ -11,9 +11,13 @@ internal class SearchGlossaryUseCase(
         glossary.fetchGlossary()
     }
 
-    suspend fun search(query: String): Result<List<GlossaryItem>, BotError> {
+    suspend fun search(query: String): Result<GlossaryItem, BotError> {
         return when (val result = glossary.search(query)) {
-            is Result.Success -> Result.Success(result.data)
+            is Result.Success -> {
+                result.data.firstOrNull()
+                    ?.let { Result.Success(it) }
+                    ?: Result.Error(BotError.GLOSSARY_TERM_NOT_FOUND)
+            }
             is Result.Error -> {
                 Napier.e(tag = TAG) { result.error.toString() }
                 startGlossary()

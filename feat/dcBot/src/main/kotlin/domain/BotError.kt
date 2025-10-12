@@ -7,4 +7,7 @@ enum class BotError: Error {
     UNKNOWN_CHARACTER,
     UNKNOWN_MOVE,
     EMPTY_GLOSSARY,
+    GLOSSARY_TERM_NOT_FOUND,
 }
+
+//TODO: split glossaryError and frameDataError
