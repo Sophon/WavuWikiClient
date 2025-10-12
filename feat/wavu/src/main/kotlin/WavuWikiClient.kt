@@ -53,6 +53,7 @@ internal class WavuWikiClientImpl(
     }
 
 
+    //TODO: ConfigRepo
     private fun fetchCharacters(): List<Character> {
         val configFile = File(CONFIG_FILE)
         val charList = json.decodeFromString<CharacterList>(configFile.readText())
