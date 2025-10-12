@@ -1,5 +1,6 @@
 import com.example.core.domain.Result
 import domain.FetchMoveListUseCase
+import domain.WavuError
 import domain.model.Character
 import domain.model.CharacterList
 import domain.model.Move
@@ -9,8 +10,7 @@ import java.io.File
 
 interface WavuWikiClient {
     suspend fun fetchCompleteMoveList()
-    suspend fun fetchMoveListFor(character: Character): Map<String, Move>?
-    fun frameDataFor(charName: String, move: String): Move?
+    fun frameDataFor(charName: String, move: String): Result<Move, WavuError>
 }
 
 internal class WavuWikiClientImpl(
@@ -35,23 +35,26 @@ internal class WavuWikiClientImpl(
         }
     }
 
-    override suspend fun fetchMoveListFor(character: Character): Map<String, Move>? {
+    override fun frameDataFor(charName: String, move: String): Result<Move, WavuError> {
+        val moveList = database[charName] ?: return Result.Error(WavuError.UNKNOWN_CHARACTER)
+        val moveData = moveList[move] ?: return Result.Error(WavuError.UNKNOWN_MOVE)
+        return Result.Success(moveData)
+    }
+
+
+    //TODO: should return a Result
+    private suspend fun fetchMoveListFor(character: Character): Map<String, Move>? {
         val result = fetchMoveListUseCase.execute(character.name)
         return when (result) {
             is Result.Success -> {
                 result.data
             }
             is Result.Error -> {
-                Napier.e(tag = TAG) { "Error: ${result.error}" }
+                Napier.e(tag = TAG) { "Error: ${result.error} for $character" }
                 null
             }
         }
     }
-
-    override fun frameDataFor(charName: String, move: String): Move? {
-        return database[charName]?.get(move)
-    }
-
 
     //TODO: ConfigRepo
     private fun fetchCharacters(): List<Character> {
