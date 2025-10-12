@@ -19,9 +19,13 @@ suspend fun main() = coroutineScope {
     }.join()
 }
 
+//TODO: extract config to constants
 private fun getApiKey(): String {
     val configFile = File("config.json")
-    val dcConfig = Json.decodeFromString<DcConfig>(configFile.readText())
+    val json = Json {
+        ignoreUnknownKeys = true
+    }
+    val dcConfig = json.decodeFromString<DcConfig>(configFile.readText())
 
     return dcConfig.heihachiRebornApiKey
 }

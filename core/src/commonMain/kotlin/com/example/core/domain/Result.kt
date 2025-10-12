@@ -9,7 +9,7 @@ sealed interface Result<out T, out E: Error> {
 }
 
 /**
- * Maps T to R
+ * Allows mapping T to R on success
  */
 inline fun <T, E : Error, R> Result<T, E>.map(map: (T) -> R): Result<R, E> {
     return when (this) {

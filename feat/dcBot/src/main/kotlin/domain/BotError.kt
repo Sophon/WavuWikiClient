@@ -1,0 +1,13 @@
+package domain
+
+import com.example.core.domain.Error
+
+enum class BotError: Error {
+    INVALID_QUERY,
+    UNKNOWN_CHARACTER,
+    UNKNOWN_MOVE,
+    EMPTY_GLOSSARY,
+    GLOSSARY_TERM_NOT_FOUND,
+}
+
+//TODO: split glossaryError and frameDataError

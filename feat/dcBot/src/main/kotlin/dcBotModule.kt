@@ -1,4 +1,5 @@
 import com.example.core.coreModule
+import domain.SearchFrameDataUseCase
 import domain.SearchGlossaryUseCase
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
@@ -16,6 +17,7 @@ fun initKoin(
         coreModule,
         dcBotModule(apiKey),
         infilModule,
+        wavuModule,
     )
 }
 
@@ -25,4 +27,5 @@ fun dcBotModule(apiKey: String) = module {
     singleOf(::HeihachiRebornImpl).bind<HeihachiReborn>()
 
     singleOf(::SearchGlossaryUseCase)
+    singleOf(::SearchFrameDataUseCase)
 }
