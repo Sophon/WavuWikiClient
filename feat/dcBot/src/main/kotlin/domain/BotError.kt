@@ -6,4 +6,5 @@ enum class BotError: Error {
     INVALID_QUERY,
     UNKNOWN_CHARACTER,
     UNKNOWN_MOVE,
+    EMPTY_GLOSSARY,
 }

@@ -6,7 +6,7 @@ import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
-import domain.GlossaryItem
+import domain.BotError
 import domain.SearchFrameDataUseCase
 import domain.SearchGlossaryUseCase
 import io.github.aakira.napier.Napier
@@ -29,6 +29,7 @@ internal class HeihachiRebornImpl(
     override suspend fun startSession() {
         Napier.d(tag = TAG) { "Starting with API: $apiKey" }
 
+        //TODO: do the two starts concurrently
         searchGlossaryUseCase.startGlossary()
         searchFrameDataUseCase.startWiki()
         startKord()
@@ -49,15 +50,31 @@ internal class HeihachiRebornImpl(
             if (kord.selfId in message.mentionedUserIds) {
                 val command: String
                 val query: String
+                val pureMessage = message.content.removeTag()
                 message.content.removeTag().split(" ").also { chunks ->
-                    if (isValidQuery(chunks).not()) return@on
+                    if (chunks.isValid().not()) return@on
                     command = chunks.first()
                     query = chunks.drop(1).joinToString(" ")
                 }
 
                 val returnMessage = when (command) {
-                    "fd" -> {
-                        searchFrameDataUseCase.search(query)
+                    "gl" -> {
+                        when (val result = searchGlossaryUseCase.search(query)) {
+                            is Result.Success -> {
+                                result.data.firstOrNull()?.definition
+                                    ?: "not found"
+                            }
+                            is Result.Error -> {
+                                if (result.error == BotError.EMPTY_GLOSSARY) {
+                                    "try again later"
+                                } else {
+                                    result.error.toString()
+                                }
+                            }
+                        }
+                    }
+                    else -> {
+                        searchFrameDataUseCase.search(pureMessage)
                             .onSuccess { it.toString() }
                             .onError { it.toString() }
 
@@ -65,12 +82,6 @@ internal class HeihachiRebornImpl(
                             is Result.Success -> result.data.toString()
                             is Result.Error -> result.error.toString()
                         }
-                    }
-                    "gl" -> {
-                        glossarySearch(query).firstOrNull()?.definition ?: "not found"
-                    }
-                    else -> {
-                        "unsupported"
                     }
                 }
 
@@ -86,22 +97,7 @@ internal class HeihachiRebornImpl(
         }
     }
 
-    private fun isValidQuery(query: List<String>): Boolean {
-        return query.size >= 2
-    }
-
-    //TODO: should return Result
-    private fun glossarySearch(query: String): List<GlossaryItem> {
-        val result = searchGlossaryUseCase.search(query)
-
-        return when (result) {
-            is Result.Success -> result.data
-            is Result.Error -> {
-                Napier.e(tag = TAG) { "Error: ${result.error}" }
-                emptyList()
-            }
-        }
-    }
+    private fun List<String>.isValid(): Boolean = this.size >= 2
 }
 
 private const val TAG = "HeihachiRebornBot"
