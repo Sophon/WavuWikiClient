@@ -1,6 +1,7 @@
 package data
 
 import BASE_URL
+import LIMIT_MOVES
 import com.example.core.domain.DataError
 import com.example.core.domain.Result
 import com.example.core.network.safeCall
@@ -24,6 +25,7 @@ internal class WavuWikiDataSourceImpl(
                 parameter("where", "id LIKE '$char%'")
                 parameter("order_by", "id")
                 parameter("format", "json")
+                parameter("limit", LIMIT_MOVES)
                 parameter("fields", "id,name,input,parent,target,damage,startup,recv,tot,crush,block,hit,ch,notes,alias,image,video,alt,_pageNamespace=ns")
             }
         }
