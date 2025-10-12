@@ -1,21 +1,14 @@
-import com.example.core.domain.onError
-import com.example.core.domain.onSuccess
+import com.example.core.domain.Result
 import dev.kord.core.Kord
-import dev.kord.core.event.Event
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
+import domain.GlossaryItem
 import domain.SearchGlossaryUseCase
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
 import util.removeTag
-import kotlin.time.Duration.Companion.seconds
 
 interface HeihachiReborn {
     suspend fun startSession()
@@ -49,13 +42,27 @@ internal class HeihachiRebornImpl(
             }
 
             if (kord.selfId in message.mentionedUserIds) {
-                searchGlossaryUseCase.search(message.content.removeTag())
-                    .onSuccess { glossaryItems ->
-                        message.channel.createMessage(glossaryItems.firstOrNull()?.definition ?: "not found")
+                val command: String
+                val query: String
+                message.content.removeTag().split(" ").also { chunks ->
+                    if (isValidQuery(chunks).not()) return@on
+                    command = chunks.first()
+                    query = chunks.drop(1).joinToString(" ")
+                }
+
+                val returnMessage = when (command) {
+                    "fd" -> {
+                        "TODO"
                     }
-                    .onError { error ->
-                        Napier.e(tag = TAG) { "Error: $error" }
+                    "gl" -> {
+                        glossarySearch(query).firstOrNull()?.definition ?: "not found"
                     }
+                    else -> {
+                        "unsupported"
+                    }
+                }
+
+                message.channel.createMessage(returnMessage)
             }
         }
 
@@ -64,6 +71,22 @@ internal class HeihachiRebornImpl(
             // we need to specify this to receive the content of messages
             @OptIn(PrivilegedIntent::class)
             intents += Intent.MessageContent
+        }
+    }
+
+    private fun isValidQuery(query: List<String>): Boolean {
+        return query.size >= 2
+    }
+
+    private fun glossarySearch(query: String): List<GlossaryItem> {
+        val result = searchGlossaryUseCase.search(query)
+
+        return when (result) {
+            is Result.Success -> result.data
+            is Result.Error -> {
+                Napier.e(tag = TAG) { "Error: ${result.error}" }
+                emptyList()
+            }
         }
     }
 }
