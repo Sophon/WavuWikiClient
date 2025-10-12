@@ -13,13 +13,12 @@ internal class SearchFrameDataUseCase(
     }
 
     fun search(query: String): Result<Move, BotError> {
-        if (isValidQuery(query).not()) {
-            return Result.Error(BotError.INVALID_QUERY)
-        }
+        val parsedQuery = parseQuery(query)
+        if (parsedQuery == null) return Result.Error(BotError.INVALID_QUERY)
 
-        val charName = query.substringBefore(' ').replaceFirstChar { it.uppercase() }
-        val move = query.dropFirstAndJoin(' ')
-        return when (val result = wavuWikiClient.frameDataFor(charName = charName, move = move)) {
+        return when (
+            val result = wavuWikiClient.frameDataFor(charName = parsedQuery.charName, move = parsedQuery.move)
+        ) {
             is Result.Success -> Result.Success(result.data)
             is Result.Error -> Result.Error(
                 when (result.error) {
@@ -30,7 +29,17 @@ internal class SearchFrameDataUseCase(
         }
     }
 
-    private fun isValidQuery(query: String): Boolean {
-        return query.split(" ").size >= 2
+    private fun parseQuery(query: String): ParsedQuery? {
+        if (query.split(" ").size < 2) return null
+
+        val charName = query.substringBefore(' ').replaceFirstChar { it.uppercase() }
+        val move = query.dropFirstAndJoin(' ')
+
+        return ParsedQuery(charName, move)
     }
+
+    private data class ParsedQuery(
+        val charName: String,
+        val move: String,
+    )
 }

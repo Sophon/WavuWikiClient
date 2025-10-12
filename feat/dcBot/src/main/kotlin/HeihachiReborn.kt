@@ -1,6 +1,4 @@
 import com.example.core.domain.Result
-import com.example.core.domain.onError
-import com.example.core.domain.onSuccess
 import dev.kord.core.Kord
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
@@ -10,6 +8,7 @@ import domain.BotError
 import domain.GlossaryItem
 import domain.SearchFrameDataUseCase
 import domain.SearchGlossaryUseCase
+import domain.model.Move
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -75,7 +74,7 @@ internal class HeihachiRebornImpl(
 
         val returnMessage = when (command) {
             "gl" -> handleGlossaryResult(searchGlossaryUseCase.search(query))
-            else -> searchFrameData(pureMessage)
+            else -> handleFrameDataResult(searchFrameDataUseCase.search(pureMessage))
         }
 
         message.channel.createMessage(returnMessage)
@@ -96,12 +95,8 @@ internal class HeihachiRebornImpl(
         }
     }
 
-    private fun searchFrameData(query: String): String {
-        searchFrameDataUseCase.search(query)
-            .onSuccess { it.toString() }
-            .onError { it.toString() }
-
-        return when (val result = searchFrameDataUseCase.search(query)) {
+    private fun handleFrameDataResult(result: Result<Move, BotError>): String {
+        return when (result) {
             is Result.Success -> result.data.toString()
             is Result.Error -> result.error.toString()
         }
