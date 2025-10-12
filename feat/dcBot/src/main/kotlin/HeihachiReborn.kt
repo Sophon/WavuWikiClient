@@ -1,10 +1,13 @@
 import com.example.core.domain.Result
+import com.example.core.domain.onError
+import com.example.core.domain.onSuccess
 import dev.kord.core.Kord
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
 import domain.GlossaryItem
+import domain.SearchFrameDataUseCase
 import domain.SearchGlossaryUseCase
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +20,7 @@ interface HeihachiReborn {
 internal class HeihachiRebornImpl(
     private val apiKey: String,
     private val searchGlossaryUseCase: SearchGlossaryUseCase,
+    private val searchFrameDataUseCase: SearchFrameDataUseCase,
 ): HeihachiReborn {
     private val events = MutableStateFlow("") //TODO: flow of events instead of string
     private lateinit var kord: Kord
@@ -26,6 +30,7 @@ internal class HeihachiRebornImpl(
         Napier.d(tag = TAG) { "Starting with API: $apiKey" }
 
         searchGlossaryUseCase.startGlossary()
+        searchFrameDataUseCase.startWiki()
         startKord()
     }
 
@@ -52,7 +57,14 @@ internal class HeihachiRebornImpl(
 
                 val returnMessage = when (command) {
                     "fd" -> {
-                        "TODO"
+                        searchFrameDataUseCase.search(query)
+                            .onSuccess { it.toString() }
+                            .onError { it.toString() }
+
+                        when (val result = searchFrameDataUseCase.search(query)) {
+                            is Result.Success -> result.data.toString()
+                            is Result.Error -> result.error.toString()
+                        }
                     }
                     "gl" -> {
                         glossarySearch(query).firstOrNull()?.definition ?: "not found"
@@ -78,6 +90,7 @@ internal class HeihachiRebornImpl(
         return query.size >= 2
     }
 
+    //TODO: should return Result
     private fun glossarySearch(query: String): List<GlossaryItem> {
         val result = searchGlossaryUseCase.search(query)
 
