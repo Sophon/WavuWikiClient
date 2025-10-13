@@ -45,11 +45,10 @@ class EmbedBuilder {
             inline = false,
         )
 
-        //TODO: clickable
-        //TODO: image
         //TODO: feedback command
         footer {
             text = "Wavu Wiki"
+            icon = "https://i.imgur.com/0cnTzNk.png"
         }
     }
 
@@ -66,6 +65,7 @@ class EmbedBuilder {
 
         footer {
             text = "Infil Glossary"
+            icon = "https://i.imgur.com/OigKJBY.png"
         }
     }
 

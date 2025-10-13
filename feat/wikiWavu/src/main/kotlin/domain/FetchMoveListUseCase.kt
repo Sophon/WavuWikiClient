@@ -16,18 +16,33 @@ internal class FetchMoveListUseCase(
                 moves
                     .map { move ->
                         move.copy(
-                            notes = move.notes
-                                ?.replace("&lt;", "<")
-                                ?.replace("&gt;", ">")
-                                ?.replace("&quot;", "\"")
-                                ?.replace("<div class=\"plainlist\">", "")
-                                ?.replace("</div>", "")
-                                ?.trim()
+                            notes = move.notes?.cleanHtml()
                         )
                     }
                     .associateBy { move ->
                         move.id.substringAfter("-")
                     }
             }
+    }
+
+    private fun String.cleanHtml(): String {
+        return this
+            .decodeHtmlEntities()
+            .removeHtmlTags()
+            .replace(Regex("\\*\\s*\\n"), "* ")
+            .trim()
+    }
+
+    private fun String.decodeHtmlEntities(): String {
+        return this
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&quot;", "\"")
+            .replace("&amp;", "&")
+            .replace("&nbsp;", " ")
+    }
+
+    private fun String.removeHtmlTags(): String {
+        return this.replace(Regex("<[^>]*>"), "")
     }
 }
