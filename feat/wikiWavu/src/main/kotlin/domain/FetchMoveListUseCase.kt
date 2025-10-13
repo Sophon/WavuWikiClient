@@ -13,9 +13,21 @@ internal class FetchMoveListUseCase(
         return source.fetchMoveList(char)
             .map { dto -> dto.cargoQuery.map { it.title } }
             .map { moves ->
-                moves.associateBy { move ->
-                    move.id.substringAfter("-")
-                }
+                moves
+                    .map { move ->
+                        move.copy(
+                            notes = move.notes
+                                ?.replace("&lt;", "<")
+                                ?.replace("&gt;", ">")
+                                ?.replace("&quot;", "\"")
+                                ?.replace("<div class=\"plainlist\">", "")
+                                ?.replace("</div>", "")
+                                ?.trim()
+                        )
+                    }
+                    .associateBy { move ->
+                        move.id.substringAfter("-")
+                    }
             }
     }
 }
