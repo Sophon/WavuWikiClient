@@ -1,6 +1,7 @@
 import com.example.core.domain.Result
 import com.example.core.util.isAtLeast
 import dev.kord.core.Kord
+import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
@@ -8,15 +9,16 @@ import dev.kord.gateway.PrivilegedIntent
 import domain.BotError
 import domain.Command
 import domain.GlossaryItem
+import domain.model.Move
 import domain.usecase.SearchFrameDataUseCase
 import domain.usecase.SearchGlossaryUseCase
-import domain.model.Move
 import domain.usecase.StartGlossaryUseCase
 import domain.usecase.StartWikiUseCase
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import util.removeTag
+import kotlin.time.ExperimentalTime
 
 interface HeihachiReborn {
     suspend fun startSession()
@@ -28,6 +30,7 @@ internal class HeihachiRebornImpl(
     private val searchGlossaryUseCase: SearchGlossaryUseCase,
     private val startWikiUseCase: StartWikiUseCase,
     private val searchFrameDataUseCase: SearchFrameDataUseCase,
+    private val embedBuilder: EmbedBuilder,
 ): HeihachiReborn {
     private lateinit var kord: Kord
 
@@ -61,9 +64,11 @@ internal class HeihachiRebornImpl(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     private suspend fun MessageCreateEvent.handleMessage() {
         if (message.content == "!test") {
             message.channel.createMessage("Replying to test")
+            message.channel.createEmbed(embedBuilder.testEmbed())
             return
         }
 
@@ -75,7 +80,15 @@ internal class HeihachiRebornImpl(
         //either a command or frame-data query
         val returnMessage = when (command.uppercase()) {
             Command.GL.name -> handleGlossaryResult(searchGlossaryUseCase.search(query))
-            else -> handleFrameDataResult(searchFrameDataUseCase.invoke(query))
+            else -> {
+                val result = searchFrameDataUseCase.invoke(query)
+                when (result) {
+                    is Result.Success -> message.channel.createEmbed(embedBuilder.moveEmbed(result.data))
+                    else -> {}
+                }
+
+                handleFrameDataResult(result)
+            }
         }
 
         message.channel.createMessage(returnMessage)
