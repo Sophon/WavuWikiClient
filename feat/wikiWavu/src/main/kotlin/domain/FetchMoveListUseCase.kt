@@ -13,9 +13,36 @@ internal class FetchMoveListUseCase(
         return source.fetchMoveList(char)
             .map { dto -> dto.cargoQuery.map { it.title } }
             .map { moves ->
-                moves.associateBy { move ->
-                    move.id.substringAfter("-")
-                }
+                moves
+                    .map { move ->
+                        move.copy(
+                            notes = move.notes?.cleanHtml()
+                        )
+                    }
+                    .associateBy { move ->
+                        move.id.substringAfter("-")
+                    }
             }
+    }
+
+    private fun String.cleanHtml(): String {
+        return this
+            .decodeHtmlEntities()
+            .removeHtmlTags()
+            .replace(Regex("\\*\\s*\\n"), "* ")
+            .trim()
+    }
+
+    private fun String.decodeHtmlEntities(): String {
+        return this
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&quot;", "\"")
+            .replace("&amp;", "&")
+            .replace("&nbsp;", " ")
+    }
+
+    private fun String.removeHtmlTags(): String {
+        return this.replace(Regex("<[^>]*>"), "")
     }
 }

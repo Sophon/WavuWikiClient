@@ -26,4 +26,6 @@ data class Move(
     val image: String? = null,
     val video: String? = null,
     val alt: String? = null,
-)
+) {
+    val characterName get() = id.substringBefore('-')
+}

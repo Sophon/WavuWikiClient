@@ -1,4 +1,6 @@
 import com.example.core.domain.Result
+import com.example.core.domain.Service
+import com.example.core.domain.Source
 import com.example.core.domain.onError
 import com.example.core.domain.onSuccess
 import com.example.core.util.removeWhiteSpace
@@ -9,7 +11,7 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-interface InfilGlossary {
+interface InfilGlossary: Service {
     suspend fun subscribe(): Flow<String>
     suspend fun fetchGlossary()
     fun search(query: String): Result<List<GlossaryItem>, GlossaryError>
@@ -62,8 +64,20 @@ internal class InfilGlossaryImpl(
                         || it.key.contains(query.removeWhiteSpace(), ignoreCase = true)
             }
             .map { it.value }
+            .distinctBy { it.term }
+            .sortedByDescending {
+                it.term.equals(query, ignoreCase = true) ||
+                        it.term.equals(query.removeWhiteSpace(), ignoreCase = true)
+            }
 
         return Result.Success(result)
+    }
+
+    override fun source(): Source {
+        return Source(
+            name = SERVICE_NAME,
+            iconUrl = "https://i.imgur.com/OigKJBY.png"
+        )
     }
 }
 

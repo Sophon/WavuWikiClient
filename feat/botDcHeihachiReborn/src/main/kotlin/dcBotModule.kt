@@ -27,6 +27,7 @@ fun dcBotModule(apiKey: String) = module {
     single { apiKey }
 
     singleOf(::HeihachiRebornImpl).bind<HeihachiReborn>()
+    singleOf(::EmbedBuilder)
 
     singleOf(::StartGlossaryUseCase)
     singleOf(::SearchGlossaryUseCase)

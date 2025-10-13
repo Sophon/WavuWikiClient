@@ -9,5 +9,3 @@ enum class BotError: Error {
     EMPTY_GLOSSARY,
     GLOSSARY_TERM_NOT_FOUND,
 }
-
-//TODO: split glossaryError and frameDataError

@@ -10,5 +10,5 @@ data class GlossaryItem(
     @SerialName("altterm") val altTerm: List<String> = listOf(),
     val videos: List<String> = listOf(), //TODO: refactor
     val games: List<String> = listOf(),
-    @SerialName("jp") val jpTranslation: String? = null,
+    @SerialName("jp") val jpTranslation: List<String> = listOf(),
 )

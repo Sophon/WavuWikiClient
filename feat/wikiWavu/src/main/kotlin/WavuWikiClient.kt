@@ -1,4 +1,6 @@
 import com.example.core.domain.Result
+import com.example.core.domain.Service
+import com.example.core.domain.Source
 import domain.FetchMoveListUseCase
 import domain.WavuError
 import domain.model.Character
@@ -8,7 +10,7 @@ import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.Json
 import java.io.File
 
-interface WavuWikiClient {
+interface WavuWikiClient: Service {
     suspend fun fetchCompleteMoveList()
     fun frameDataFor(charName: String, move: String): Result<Move, WavuError>
 }
@@ -37,6 +39,13 @@ internal class WavuWikiClientImpl(
         val moveList = database[charName] ?: return Result.Error(WavuError.UNKNOWN_CHARACTER)
         val moveData = moveList[move] ?: return Result.Error(WavuError.UNKNOWN_MOVE)
         return Result.Success(moveData)
+    }
+
+    override fun source(): Source {
+        return Source(
+            name = SERVICE_NAME,
+            iconUrl = "https://i.imgur.com/0cnTzNk.png"
+        )
     }
 
 
