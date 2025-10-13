@@ -53,15 +53,15 @@ class EmbedBuilder {
         }
     }
 
-    //TODO: replace italics tag
-    //TODO: replace underline tag
     fun glossaryEmbed(item: GlossaryItem): EmbedBuilder.() -> Unit = {
-        title = item.term
+        val formattedItem = item.format()
+        title = formattedItem.term
         color = Color(ORANGE)
 
-        field(name = "", value = item.definition, inline = false)
+        field(name = "", value = formattedItem.definition.replaceUnderline(), inline = false)
 
-        val japaneseValueString = item.jpTranslation.joinToString(separator = "") { "* $it\n" }
+        val japaneseValueString = formattedItem.jpTranslation
+            .joinToString(separator = "") { "* $it\n" }
         field(name = "🇯🇵", value = japaneseValueString, inline = false)
 
         footer {
@@ -84,6 +84,37 @@ class EmbedBuilder {
             this.name = name
             this.value = value.orEmpty()
             this.inline = inline
+        }
+    }
+
+    private fun GlossaryItem.format(): GlossaryItem {
+        return this.copy(
+            definition = this.definition.replaceUnderline(),
+            jpTranslation = this.jpTranslation.map { it.replaceItalic() }
+        )
+    }
+
+    private fun String.replaceItalic(): String {
+        return this
+            .replace("<em>", "*")
+            .replace("</em>", "*")
+    }
+
+    /**
+     * Replaces HTML tags with Markdown.
+     *
+     * Examples:
+     * - `!<'block'>` → `__block__`
+     * - `!<'whiff punish','whiff'>` → `__whiff__`
+     *
+     * Takes the last comma-separated value if multiple are present.
+     */
+    private fun String.replaceUnderline(): String {
+        return this.replace(Regex("!<'([^']+)'(?:,'[^']*')*>")) { matchResult ->
+            val content = matchResult.groupValues[1]
+            val words = content.split("','")
+            val lastWord = words.last()
+            "**__${lastWord}__**"
         }
     }
 }
