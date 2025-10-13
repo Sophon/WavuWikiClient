@@ -1,5 +1,6 @@
 import dev.kord.common.Color
 import dev.kord.rest.builder.message.EmbedBuilder
+import domain.GlossaryItem
 import domain.model.Move
 
 class EmbedBuilder {
@@ -51,6 +52,20 @@ class EmbedBuilder {
         }
     }
 
+    fun glossaryEmbed(item: GlossaryItem): EmbedBuilder.() -> Unit = {
+        title = item.term
+        color = Color(ORANGE)
+
+        field(name = "", value = item.definition, inline = false)
+
+        val japaneseValueString = item.jpTranslation.joinToString(separator = "") { "* $it\n" }
+        field(name = "🇯🇵", value = japaneseValueString, inline = false)
+
+        footer {
+            text = "Infil Glossary"
+        }
+    }
+
 
     private fun EmbedBuilder.field(
         name: String,
@@ -66,3 +81,4 @@ class EmbedBuilder {
 }
 
 private const val COLOR = 0x00FF00
+private const val ORANGE = 0x00FF6400

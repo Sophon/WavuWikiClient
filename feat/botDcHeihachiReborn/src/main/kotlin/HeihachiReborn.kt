@@ -40,7 +40,7 @@ internal class HeihachiRebornImpl(
 
         coroutineScope {
             launch { startGlossaryUseCase.invoke() }
-            launch { startWikiUseCase.invoke() }
+//            launch { startWikiUseCase.invoke() }
         }
         startKord()
     }
@@ -79,7 +79,15 @@ internal class HeihachiRebornImpl(
 
         //either a command or frame-data query
         val returnMessage = when (command.uppercase()) {
-            Command.GL.name -> handleGlossaryResult(searchGlossaryUseCase.search(query))
+            Command.GL.name -> {
+                val result = searchGlossaryUseCase.search(query)
+                when (result) {
+                    is Result.Success -> message.channel.createEmbed(embedBuilder.glossaryEmbed(result.data))
+                    else -> {}
+                }
+
+                handleGlossaryResult(searchGlossaryUseCase.search(query))
+            }
             else -> {
                 val result = searchFrameDataUseCase.invoke(query)
                 when (result) {
@@ -91,7 +99,7 @@ internal class HeihachiRebornImpl(
             }
         }
 
-        message.channel.createMessage(returnMessage)
+//        message.channel.createMessage(returnMessage)
     }
 
     private fun handleGlossaryResult(result: Result<GlossaryItem, BotError>): String {

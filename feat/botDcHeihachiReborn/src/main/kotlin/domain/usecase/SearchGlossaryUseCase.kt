@@ -14,7 +14,8 @@ internal class SearchGlossaryUseCase(
         val cleanQuery = query.substringAfter(' ')
         return when (val result = glossary.search(cleanQuery)) {
             is Result.Success -> {
-                result.data.firstOrNull()
+                result.data
+                    .firstOrNull()
                     ?.let { Result.Success(it) }
                     ?: Result.Error(BotError.GLOSSARY_TERM_NOT_FOUND)
             }
