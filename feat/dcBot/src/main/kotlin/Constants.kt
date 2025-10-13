@@ -1,0 +1,1 @@
+internal const val CONFIG_FILE_NAME = "config.json"
