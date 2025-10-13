@@ -53,6 +53,8 @@ class EmbedBuilder {
         }
     }
 
+    //TODO: replace italics tag
+    //TODO: replace underline tag
     fun glossaryEmbed(item: GlossaryItem): EmbedBuilder.() -> Unit = {
         title = item.term
         color = Color(ORANGE)
