@@ -8,9 +8,11 @@ import dev.kord.gateway.PrivilegedIntent
 import domain.BotError
 import domain.Command
 import domain.GlossaryItem
-import domain.SearchFrameDataUseCase
-import domain.SearchGlossaryUseCase
+import domain.usecase.SearchFrameDataUseCase
+import domain.usecase.SearchGlossaryUseCase
 import domain.model.Move
+import domain.usecase.StartGlossaryUseCase
+import domain.usecase.StartWikiUseCase
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -22,7 +24,9 @@ interface HeihachiReborn {
 
 internal class HeihachiRebornImpl(
     private val apiKey: String,
+    private val startGlossaryUseCase: StartGlossaryUseCase,
     private val searchGlossaryUseCase: SearchGlossaryUseCase,
+    private val startWikiUseCase: StartWikiUseCase,
     private val searchFrameDataUseCase: SearchFrameDataUseCase,
 ): HeihachiReborn {
     private lateinit var kord: Kord
@@ -32,8 +36,8 @@ internal class HeihachiRebornImpl(
         Napier.d(tag = TAG) { "Starting with API: $apiKey" }
 
         coroutineScope {
-            launch { searchGlossaryUseCase.startGlossary() }
-            launch { searchFrameDataUseCase.startWiki() }
+            launch { startGlossaryUseCase.invoke() }
+            launch { startWikiUseCase.invoke() }
         }
         startKord()
     }
@@ -71,7 +75,7 @@ internal class HeihachiRebornImpl(
         //either a command or frame-data query
         val returnMessage = when (command.uppercase()) {
             Command.GL.name -> handleGlossaryResult(searchGlossaryUseCase.search(query))
-            else -> handleFrameDataResult(searchFrameDataUseCase.search(query))
+            else -> handleFrameDataResult(searchFrameDataUseCase.invoke(query))
         }
 
         message.channel.createMessage(returnMessage)
