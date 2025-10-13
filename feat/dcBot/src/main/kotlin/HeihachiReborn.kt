@@ -1,4 +1,5 @@
 import com.example.core.domain.Result
+import com.example.core.util.isAtLeast
 import dev.kord.core.Kord
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
@@ -64,25 +65,17 @@ internal class HeihachiRebornImpl(
 
         if (kord.selfId !in message.mentionedUserIds) return
 
-        val command: String
-        val query: String
-        val pureMessage = message.content.removeTag()
-        message.content.removeTag().split(" ").also { chunks ->
-            if (chunks.isValid().not()) return
-            command = chunks.first()
-            query = chunks.drop(1).joinToString(" ")
-        }
+        val query = message.content.removeTag().takeIf { it.isAtLeast(2) } ?: return
+        val command = query.substringBefore(' ')
 
         //either a command or frame-data query
         val returnMessage = when (command.uppercase()) {
             Command.GL.name -> handleGlossaryResult(searchGlossaryUseCase.search(query))
-            else -> handleFrameDataResult(searchFrameDataUseCase.search(pureMessage))
+            else -> handleFrameDataResult(searchFrameDataUseCase.search(query))
         }
 
         message.channel.createMessage(returnMessage)
     }
-
-    private fun List<String>.isValid(): Boolean = this.size >= 2
 
     private fun handleGlossaryResult(result: Result<GlossaryItem, BotError>): String {
         return when (result) {

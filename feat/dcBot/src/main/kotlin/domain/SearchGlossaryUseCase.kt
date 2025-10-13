@@ -12,7 +12,8 @@ internal class SearchGlossaryUseCase(
     }
 
     suspend fun search(query: String): Result<GlossaryItem, BotError> {
-        return when (val result = glossary.search(query)) {
+        val cleanQuery = query.substringAfter(' ')
+        return when (val result = glossary.search(cleanQuery)) {
             is Result.Success -> {
                 result.data.firstOrNull()
                     ?.let { Result.Success(it) }
