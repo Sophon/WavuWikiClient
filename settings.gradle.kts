@@ -34,6 +34,6 @@ plugins {
 
 include(":composeApp")
 include(":core")
-include(":feat:Infil")
-include(":feat:dcBot")
-include(":feat:wavu")
+include(":feat:glossaryInfil")
+include(":feat:botDcHeihachiReborn")
+include(":feat:wikiWavu")

@@ -1,18 +1,16 @@
-package domain
+package domain.usecase
 
 import WavuWikiClient
 import com.example.core.domain.Result
 import com.example.core.util.dropFirstAndJoin
+import domain.BotError
+import domain.WavuError
 import domain.model.Move
 
 internal class SearchFrameDataUseCase(
     private val wavuWikiClient: WavuWikiClient,
 ) {
-    suspend fun startWiki() {
-        wavuWikiClient.fetchCompleteMoveList()
-    }
-
-    fun search(query: String): Result<Move, BotError> {
+    fun invoke(query: String): Result<Move, BotError> {
         val parsedQuery = parseQuery(query)
         if (parsedQuery == null) return Result.Error(BotError.INVALID_QUERY)
 

@@ -15,10 +15,8 @@ interface WavuWikiClient {
 
 internal class WavuWikiClientImpl(
     private val fetchMoveListUseCase: FetchMoveListUseCase,
+    private val json: Json,
 ): WavuWikiClient {
-    val json = Json {
-        ignoreUnknownKeys = true
-    }
     private var database: MutableMap<String, Map<String, Move>> = mutableMapOf()
 
     override suspend fun fetchCompleteMoveList() {

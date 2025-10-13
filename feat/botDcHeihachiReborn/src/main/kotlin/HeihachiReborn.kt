@@ -1,14 +1,18 @@
 import com.example.core.domain.Result
+import com.example.core.util.isAtLeast
 import dev.kord.core.Kord
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
 import domain.BotError
+import domain.Command
 import domain.GlossaryItem
-import domain.SearchFrameDataUseCase
-import domain.SearchGlossaryUseCase
+import domain.usecase.SearchFrameDataUseCase
+import domain.usecase.SearchGlossaryUseCase
 import domain.model.Move
+import domain.usecase.StartGlossaryUseCase
+import domain.usecase.StartWikiUseCase
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -20,7 +24,9 @@ interface HeihachiReborn {
 
 internal class HeihachiRebornImpl(
     private val apiKey: String,
+    private val startGlossaryUseCase: StartGlossaryUseCase,
     private val searchGlossaryUseCase: SearchGlossaryUseCase,
+    private val startWikiUseCase: StartWikiUseCase,
     private val searchFrameDataUseCase: SearchFrameDataUseCase,
 ): HeihachiReborn {
     private lateinit var kord: Kord
@@ -30,8 +36,8 @@ internal class HeihachiRebornImpl(
         Napier.d(tag = TAG) { "Starting with API: $apiKey" }
 
         coroutineScope {
-            launch { searchGlossaryUseCase.startGlossary() }
-            launch { searchFrameDataUseCase.startWiki() }
+            launch { startGlossaryUseCase.invoke() }
+            launch { startWikiUseCase.invoke() }
         }
         startKord()
     }
@@ -63,24 +69,17 @@ internal class HeihachiRebornImpl(
 
         if (kord.selfId !in message.mentionedUserIds) return
 
-        val command: String
-        val query: String
-        val pureMessage = message.content.removeTag()
-        message.content.removeTag().split(" ").also { chunks ->
-            if (chunks.isValid().not()) return
-            command = chunks.first()
-            query = chunks.drop(1).joinToString(" ")
-        }
+        val query = message.content.removeTag().takeIf { it.isAtLeast(2) } ?: return
+        val command = query.substringBefore(' ')
 
-        val returnMessage = when (command) {
-            "gl" -> handleGlossaryResult(searchGlossaryUseCase.search(query))
-            else -> handleFrameDataResult(searchFrameDataUseCase.search(pureMessage))
+        //either a command or frame-data query
+        val returnMessage = when (command.uppercase()) {
+            Command.GL.name -> handleGlossaryResult(searchGlossaryUseCase.search(query))
+            else -> handleFrameDataResult(searchFrameDataUseCase.invoke(query))
         }
 
         message.channel.createMessage(returnMessage)
     }
-
-    private fun List<String>.isValid(): Boolean = this.size >= 2
 
     private fun handleGlossaryResult(result: Result<GlossaryItem, BotError>): String {
         return when (result) {

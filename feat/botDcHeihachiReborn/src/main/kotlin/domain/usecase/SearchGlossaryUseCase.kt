@@ -1,18 +1,18 @@
-package domain
+package domain.usecase
 
 import InfilGlossary
 import com.example.core.domain.Result
+import domain.BotError
+import domain.GlossaryItem
 import io.github.aakira.napier.Napier
 
 internal class SearchGlossaryUseCase(
     private val glossary: InfilGlossary,
+    private val startGlossaryUseCase: StartGlossaryUseCase,
 ) {
-    suspend fun startGlossary() {
-        glossary.fetchGlossary()
-    }
-
     suspend fun search(query: String): Result<GlossaryItem, BotError> {
-        return when (val result = glossary.search(query)) {
+        val cleanQuery = query.substringAfter(' ')
+        return when (val result = glossary.search(cleanQuery)) {
             is Result.Success -> {
                 result.data.firstOrNull()
                     ?.let { Result.Success(it) }
@@ -20,7 +20,7 @@ internal class SearchGlossaryUseCase(
             }
             is Result.Error -> {
                 Napier.e(tag = TAG) { result.error.toString() }
-                startGlossary()
+                startGlossaryUseCase.invoke()
                 Result.Error(BotError.EMPTY_GLOSSARY)
             }
         }

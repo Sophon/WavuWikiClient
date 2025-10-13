@@ -10,3 +10,9 @@ fun String.dropFirstAndJoin(delimiter: Char): String {
         .drop(1)
         .joinToString(delimiter.toString())
 }
+
+fun String.isAtLeast(wordCount: Int): Boolean {
+    return this
+        .split(' ')
+        .size >= wordCount
+}
