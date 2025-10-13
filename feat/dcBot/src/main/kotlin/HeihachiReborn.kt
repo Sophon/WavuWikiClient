@@ -5,6 +5,7 @@ import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
 import domain.BotError
+import domain.Command
 import domain.GlossaryItem
 import domain.SearchFrameDataUseCase
 import domain.SearchGlossaryUseCase
@@ -72,8 +73,9 @@ internal class HeihachiRebornImpl(
             query = chunks.drop(1).joinToString(" ")
         }
 
-        val returnMessage = when (command) {
-            "gl" -> handleGlossaryResult(searchGlossaryUseCase.search(query))
+        //either a command or frame-data query
+        val returnMessage = when (command.uppercase()) {
+            Command.GL.name -> handleGlossaryResult(searchGlossaryUseCase.search(query))
             else -> handleFrameDataResult(searchFrameDataUseCase.search(pureMessage))
         }
 
