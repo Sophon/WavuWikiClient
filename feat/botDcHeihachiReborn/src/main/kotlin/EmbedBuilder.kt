@@ -26,8 +26,8 @@ class EmbedBuilder {
     }
 
     fun moveEmbed(move: Move): EmbedBuilder.() -> Unit = {
-        title = move.characterName
-        description = move.input
+        title = move.characterName //TODO: clickable
+        description = move.input //TODO: clickable
         color = Color(COLOR)
 
         field(name = "Level", value = move.level,)
@@ -43,6 +43,9 @@ class EmbedBuilder {
             inline = false,
         )
 
+        //TODO: clickable
+        //TODO: image
+        //TODO: feedback command
         footer {
             text = "Wavu Wiki"
         }
