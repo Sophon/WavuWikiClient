@@ -62,6 +62,11 @@ internal class InfilGlossaryImpl(
                         || it.key.contains(query.removeWhiteSpace(), ignoreCase = true)
             }
             .map { it.value }
+            .distinctBy { it.term }
+            .sortedByDescending {
+                it.term.equals(query, ignoreCase = true) ||
+                        it.term.equals(query.removeWhiteSpace(), ignoreCase = true)
+            }
 
         return Result.Success(result)
     }
