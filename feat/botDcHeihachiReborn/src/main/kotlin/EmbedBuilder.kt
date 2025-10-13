@@ -1,5 +1,6 @@
 import dev.kord.common.Color
 import dev.kord.rest.builder.message.EmbedBuilder
+import domain.BotError
 import domain.GlossaryItem
 import domain.model.Move
 
@@ -29,7 +30,7 @@ class EmbedBuilder {
     fun moveEmbed(move: Move): EmbedBuilder.() -> Unit = {
         title = move.characterName //TODO: clickable
         description = move.input //TODO: clickable
-        color = Color(COLOR)
+        color = Color(GREEN)
 
         field(name = "Level", value = move.level,)
         field(name = "Damage", value = move.damage.orEmpty(),)
@@ -66,6 +67,11 @@ class EmbedBuilder {
         }
     }
 
+    fun errorEmbed(error: BotError): EmbedBuilder.() -> Unit = {
+        title = "Error"
+        description = error.toString()
+    }
+
 
     private fun EmbedBuilder.field(
         name: String,
@@ -80,5 +86,5 @@ class EmbedBuilder {
     }
 }
 
-private const val COLOR = 0x00FF00
+private const val GREEN = 0x00FF00
 private const val ORANGE = 0x00FF6400

@@ -8,8 +8,6 @@ import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
 import domain.BotError
 import domain.Command
-import domain.GlossaryItem
-import domain.model.Move
 import domain.usecase.SearchFrameDataUseCase
 import domain.usecase.SearchGlossaryUseCase
 import domain.usecase.StartGlossaryUseCase
@@ -40,7 +38,7 @@ internal class HeihachiRebornImpl(
 
         coroutineScope {
             launch { startGlossaryUseCase.invoke() }
-//            launch { startWikiUseCase.invoke() }
+            launch { startWikiUseCase.invoke() }
         }
         startKord()
     }
@@ -78,47 +76,27 @@ internal class HeihachiRebornImpl(
         val command = query.substringBefore(' ')
 
         //either a command or frame-data query
-        val returnMessage = when (command.uppercase()) {
+        when (command.uppercase()) {
             Command.GL.name -> {
-                val result = searchGlossaryUseCase.search(query)
-                when (result) {
-                    is Result.Success -> message.channel.createEmbed(embedBuilder.glossaryEmbed(result.data))
-                    else -> {}
+                handleResult(searchGlossaryUseCase.search(query)) { glossaryItem ->
+                    embedBuilder.glossaryEmbed(glossaryItem)
                 }
-
-                handleGlossaryResult(searchGlossaryUseCase.search(query))
             }
             else -> {
-                val result = searchFrameDataUseCase.invoke(query)
-                when (result) {
-                    is Result.Success -> message.channel.createEmbed(embedBuilder.moveEmbed(result.data))
-                    else -> {}
-                }
-
-                handleFrameDataResult(result)
-            }
-        }
-
-//        message.channel.createMessage(returnMessage)
-    }
-
-    private fun handleGlossaryResult(result: Result<GlossaryItem, BotError>): String {
-        return when (result) {
-            is Result.Success -> result.data.definition
-            is Result.Error -> {
-                when (result.error) {
-                    BotError.EMPTY_GLOSSARY -> "Try again later."
-                    BotError.GLOSSARY_TERM_NOT_FOUND -> "Term not found."
-                    else -> ""
+                handleResult(searchFrameDataUseCase.invoke(query)) { move ->
+                    embedBuilder.moveEmbed(move)
                 }
             }
         }
     }
 
-    private fun handleFrameDataResult(result: Result<Move, BotError>): String {
-        return when (result) {
-            is Result.Success -> result.data.toString()
-            is Result.Error -> result.error.toString()
+    private suspend fun <T, E: BotError> MessageCreateEvent.handleResult(
+        result: Result<T, E>,
+        createEmbed: (T) -> dev.kord.rest.builder.message.EmbedBuilder.() -> Unit,
+    ) {
+        when (result) {
+            is Result.Success -> message.channel.createEmbed(createEmbed(result.data))
+            is Result.Error -> message.channel.createEmbed(embedBuilder.errorEmbed(result.error))
         }
     }
 }
