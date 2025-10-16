@@ -24,10 +24,7 @@ class InMemoryMoveListDB: MoveListDB {
         return Result.Success(moveData)
     }
 
-    override suspend fun insertMoveList(character: Character, moveList: Map<String, Move>) {
-        database.put(key = character.name, value = moveList)
-        character.alias.forEach { alias ->
-            database[alias] = moveList
-        }
+    override suspend fun insertMoveList(charName: String, moveList: Map<String, Move>) {
+        database.put(key = charName, value = moveList)
     }
 }

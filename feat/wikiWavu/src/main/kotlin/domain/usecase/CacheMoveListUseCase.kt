@@ -14,8 +14,13 @@ class CacheMoveListUseCase(
         character: Character,
         moveList: Map<String, Move>
     ): EmptyResult<WavuError> {
-        db.insertMoveList(character, moveList)
-
+        db.insertMoveList(
+            charName = character.name.lowercase(),
+            moveList = moveList
+        )
+        character.alias.forEach { alias ->
+            db.insertMoveList(charName = alias, moveList = moveList)
+        }
         return Result.Success(Unit)
     }
 }

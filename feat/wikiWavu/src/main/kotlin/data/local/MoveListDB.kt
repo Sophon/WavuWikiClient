@@ -9,5 +9,5 @@ import domain.model.Move
 interface MoveListDB {
     suspend fun fetchMoveListFor(charName: String): Map<String, Move>
     suspend fun fetchMoveDataFor(charName: String, moveQuery: String): Result<Move, WavuError>
-    suspend fun insertMoveList(character: Character, moveList: Map<String, Move>)
+    suspend fun insertMoveList(charName: String, moveList: Map<String, Move>)
 }

@@ -33,7 +33,7 @@ internal class SearchFrameDataUseCase(
     private fun parseQuery(query: String): ParsedQuery? {
         if (query.split(" ").size < 2) return null
 
-        val charName = query.substringBefore(' ').replaceFirstChar { it.uppercase() }
+        val charName = query.substringBefore(' ')
         val move = query.dropFirstAndJoin(' ')
 
         return ParsedQuery(charName, move)
