@@ -3,7 +3,6 @@ import com.example.core.domain.Result
 import com.example.core.domain.Service
 import com.example.core.domain.Source
 import domain.WavuError
-import domain.model.Character
 import domain.model.Move
 import domain.usecase.CacheMoveListUseCase
 import domain.usecase.DownloadMoveListUseCase
@@ -12,7 +11,7 @@ import domain.usecase.FetchMoveDataUseCase
 import io.github.aakira.napier.Napier
 
 interface WavuWikiClient: Service {
-    suspend fun fetchCompleteMoveList(): EmptyResult<WavuError>
+    suspend fun downloadCompleteMoveList(): EmptyResult<WavuError>
     suspend fun frameDataFor(charName: String, moveQuery: String): Result<Move, WavuError>
 }
 
@@ -22,15 +21,20 @@ internal class WavuWikiClientImpl(
     private val cacheMoveListUseCase: CacheMoveListUseCase,
     private val fetchMoveDataUseCase: FetchMoveDataUseCase,
 ): WavuWikiClient {
-    override suspend fun fetchCompleteMoveList(): EmptyResult<WavuError> {
+    override suspend fun downloadCompleteMoveList(): EmptyResult<WavuError> {
         return when (val result = fetchCharacterListUseCase.invoke()) {
             is Result.Success -> {
                 result.data.characterList.forEach { character ->
-                    fetchMoveListFor(character)?.let { moveList ->
-                        cacheMoveListUseCase.invoke(character, moveList)
-
-                        Napier.d(tag = TAG) {
-                            "${moveList.size} moves for ${character.name} (${character.alias}) added"
+                    when (val moveListResult = downloadMoveListUseCase.invoke(character.name)) {
+                        is Result.Success -> {
+                            cacheMoveListUseCase.invoke(character, moveListResult.data)
+                            Napier.d(tag = TAG) {
+                                "${moveListResult.data.size} moves for ${character.name} (${character.alias}) added"
+                            }
+                        }
+                        is Result.Error -> {
+                            Napier.e(tag = TAG) { "Error: ${moveListResult.error} for $character" }
+                            moveListResult.error
                         }
                     }
                 }
@@ -55,22 +59,6 @@ internal class WavuWikiClientImpl(
             name = SERVICE_NAME,
             iconUrl = "https://i.imgur.com/0cnTzNk.png"
         )
-    }
-
-
-    //TODO: should return a Result
-    //TODO: usecase
-    private suspend fun fetchMoveListFor(character: Character): Map<String, Move>? {
-        val result = downloadMoveListUseCase.execute(character.name)
-        return when (result) {
-            is Result.Success -> {
-                result.data
-            }
-            is Result.Error -> {
-                Napier.e(tag = TAG) { "Error: ${result.error} for $character" }
-                null
-            }
-        }
     }
 }
 
