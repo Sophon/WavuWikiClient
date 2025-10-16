@@ -7,7 +7,7 @@ import domain.model.Move
 
 //TODO: use Result -> think about Errors
 interface MoveListDB {
-    suspend fun fetchMoveListFor(character: Character): Map<String, Move>
-    suspend fun fetchMoveDataFor(character: Character, moveQuery: String): Result<Move, WavuError>
+    suspend fun fetchMoveListFor(charName: String): Map<String, Move>
+    suspend fun fetchMoveDataFor(charName: String, moveQuery: String): Result<Move, WavuError>
     suspend fun insertMoveList(character: Character, moveList: Map<String, Move>)
 }

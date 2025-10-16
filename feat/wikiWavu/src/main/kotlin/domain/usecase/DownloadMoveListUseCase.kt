@@ -6,7 +6,7 @@ import com.example.core.domain.map
 import data.remote.WavuWikiDataSource
 import domain.model.Move
 
-internal class DownloadMoveList(
+internal class DownloadMoveListUseCase(
     private val source: WavuWikiDataSource,
 ) {
     suspend fun execute(char: String): Result<Map<String, Move>, DataError.Remote> {

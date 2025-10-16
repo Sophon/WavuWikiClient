@@ -8,15 +8,15 @@ import domain.model.Move
 class InMemoryMoveListDB: MoveListDB {
     private var database: MutableMap<String, Map<String, Move>> = mutableMapOf()
 
-    override suspend fun fetchMoveListFor(character: Character): Map<String, Move> {
-        return database[character.name] ?: mapOf()
+    override suspend fun fetchMoveListFor(charName: String): Map<String, Move> {
+        return database[charName] ?: mapOf()
     }
 
     override suspend fun fetchMoveDataFor(
-        character: Character,
+        charName: String,
         moveQuery: String
     ): Result<Move, WavuError> {
-        val moveList = database[character.name]
+        val moveList = database[charName]
             ?: return Result.Error(WavuError.UNKNOWN_CHARACTER)
         val moveData = moveList[moveQuery]
             ?: return Result.Error(WavuError.UNKNOWN_MOVE)

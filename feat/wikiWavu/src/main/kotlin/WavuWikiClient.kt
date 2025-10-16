@@ -6,33 +6,35 @@ import domain.WavuError
 import domain.model.Character
 import domain.model.CharacterList
 import domain.model.Move
+import domain.usecase.CacheMoveListUseCase
 import domain.usecase.FetchCharacterListUseCase
-import domain.usecase.DownloadMoveList
+import domain.usecase.DownloadMoveListUseCase
+import domain.usecase.FetchMoveDataUseCase
 import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.Json
 import java.io.File
 
 interface WavuWikiClient: Service {
     suspend fun fetchCompleteMoveList(): EmptyResult<WavuError>
-    fun frameDataFor(charName: String, move: String): Result<Move, WavuError>
+    suspend fun frameDataFor(charName: String, moveQuery: String): Result<Move, WavuError>
 }
 
 internal class WavuWikiClientImpl(
     private val fetchCharacterListUseCase: FetchCharacterListUseCase,
-    private val downloadMoveList: DownloadMoveList,
+    private val downloadMoveListUseCase: DownloadMoveListUseCase,
+    private val cacheMoveListUseCase: CacheMoveListUseCase,
+    private val fetchMoveDataUseCase: FetchMoveDataUseCase,
     private val json: Json,
 ): WavuWikiClient {
-    private var database: MutableMap<String, Map<String, Move>> = mutableMapOf()
+//    private var database: MutableMap<String, Map<String, Move>> = mutableMapOf()
 
     override suspend fun fetchCompleteMoveList(): EmptyResult<WavuError> {
         return when (val result = fetchCharacterListUseCase.invoke()) {
             is Result.Success -> {
                 result.data.characterList.forEach { character ->
                     fetchMoveListFor(character)?.let { moveList ->
-                        insertMoveListIntoDatabase(
-                            character = character,
-                            moveList = moveList
-                        )
+                        cacheMoveListUseCase.invoke(character, moveList)
+
                         Napier.d(tag = TAG) {
                             "${moveList.size} moves for ${character.name} (${character.alias}) added"
                         }
@@ -47,10 +49,11 @@ internal class WavuWikiClientImpl(
         }
     }
 
-    override fun frameDataFor(charName: String, move: String): Result<Move, WavuError> {
-        val moveList = database[charName] ?: return Result.Error(WavuError.UNKNOWN_CHARACTER)
-        val moveData = moveList[move] ?: return Result.Error(WavuError.UNKNOWN_MOVE)
-        return Result.Success(moveData)
+    override suspend fun frameDataFor(
+        charName: String,
+        moveQuery: String
+    ): Result<Move, WavuError> {
+        return fetchMoveDataUseCase.invoke(charName, moveQuery)
     }
 
     override fun source(): Source {
@@ -62,8 +65,9 @@ internal class WavuWikiClientImpl(
 
 
     //TODO: should return a Result
+    //TODO: usecase
     private suspend fun fetchMoveListFor(character: Character): Map<String, Move>? {
-        val result = downloadMoveList.execute(character.name)
+        val result = downloadMoveListUseCase.execute(character.name)
         return when (result) {
             is Result.Success -> {
                 result.data
@@ -81,14 +85,6 @@ internal class WavuWikiClientImpl(
         val configFile = File(CONFIG_FILE)
         val charList = json.decodeFromString<CharacterList>(configFile.readText())
         return charList.characterList
-    }
-
-    private fun insertMoveListIntoDatabase(
-        character: Character,
-        moveList: Map<String, Move>,
-    ) {
-        database.put(key = character.name, value = moveList)
-        character.alias.forEach { alias -> database[alias] = moveList }
     }
 }
 

@@ -15,7 +15,7 @@ suspend fun main() = coroutineScope {
 
     val move = client.frameDataFor(
         charName = "Kazuya",
-        move = "1,1,2"
+        moveQuery = "1,1,2"
     )
     println("\n\n\ndata: $move")
 }
