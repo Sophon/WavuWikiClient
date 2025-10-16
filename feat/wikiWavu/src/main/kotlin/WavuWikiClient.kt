@@ -4,15 +4,12 @@ import com.example.core.domain.Service
 import com.example.core.domain.Source
 import domain.WavuError
 import domain.model.Character
-import domain.model.CharacterList
 import domain.model.Move
 import domain.usecase.CacheMoveListUseCase
-import domain.usecase.FetchCharacterListUseCase
 import domain.usecase.DownloadMoveListUseCase
+import domain.usecase.FetchCharacterListUseCase
 import domain.usecase.FetchMoveDataUseCase
 import io.github.aakira.napier.Napier
-import kotlinx.serialization.json.Json
-import java.io.File
 
 interface WavuWikiClient: Service {
     suspend fun fetchCompleteMoveList(): EmptyResult<WavuError>
@@ -24,10 +21,7 @@ internal class WavuWikiClientImpl(
     private val downloadMoveListUseCase: DownloadMoveListUseCase,
     private val cacheMoveListUseCase: CacheMoveListUseCase,
     private val fetchMoveDataUseCase: FetchMoveDataUseCase,
-    private val json: Json,
 ): WavuWikiClient {
-//    private var database: MutableMap<String, Map<String, Move>> = mutableMapOf()
-
     override suspend fun fetchCompleteMoveList(): EmptyResult<WavuError> {
         return when (val result = fetchCharacterListUseCase.invoke()) {
             is Result.Success -> {
@@ -77,14 +71,6 @@ internal class WavuWikiClientImpl(
                 null
             }
         }
-    }
-
-    //TODO: ConfigRepo
-    //TODO: new character.json
-    private fun fetchCharacters(): List<Character> {
-        val configFile = File(CONFIG_FILE)
-        val charList = json.decodeFromString<CharacterList>(configFile.readText())
-        return charList.characterList
     }
 }
 

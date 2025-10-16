@@ -4,8 +4,8 @@ import data.local.MoveListDB
 import data.remote.WavuWikiDataSource
 import data.remote.WavuWikiDataSourceImpl
 import domain.usecase.CacheMoveListUseCase
-import domain.usecase.FetchCharacterListUseCase
 import domain.usecase.DownloadMoveListUseCase
+import domain.usecase.FetchCharacterListUseCase
 import domain.usecase.FetchMoveDataUseCase
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
