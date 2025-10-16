@@ -1,11 +1,10 @@
-package data
+package data.remote
 
 import BASE_URL
 import LIMIT_MOVES
 import com.example.core.domain.DataError
 import com.example.core.domain.Result
 import com.example.core.network.safeCall
-import domain.model.Move
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter

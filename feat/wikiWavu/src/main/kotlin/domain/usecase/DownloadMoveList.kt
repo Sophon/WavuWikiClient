@@ -3,10 +3,10 @@ package domain.usecase
 import com.example.core.domain.DataError
 import com.example.core.domain.Result
 import com.example.core.domain.map
-import data.WavuWikiDataSource
+import data.remote.WavuWikiDataSource
 import domain.model.Move
 
-internal class FetchMoveListUseCase(
+internal class DownloadMoveList(
     private val source: WavuWikiDataSource,
 ) {
     suspend fun execute(char: String): Result<Map<String, Move>, DataError.Remote> {

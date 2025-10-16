@@ -2,14 +2,12 @@ import com.example.core.domain.EmptyResult
 import com.example.core.domain.Result
 import com.example.core.domain.Service
 import com.example.core.domain.Source
-import com.example.core.domain.onError
-import com.example.core.domain.onSuccess
-import domain.usecase.FetchMoveListUseCase
 import domain.WavuError
 import domain.model.Character
 import domain.model.CharacterList
 import domain.model.Move
 import domain.usecase.FetchCharacterListUseCase
+import domain.usecase.DownloadMoveList
 import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -21,7 +19,7 @@ interface WavuWikiClient: Service {
 
 internal class WavuWikiClientImpl(
     private val fetchCharacterListUseCase: FetchCharacterListUseCase,
-    private val fetchMoveListUseCase: FetchMoveListUseCase,
+    private val downloadMoveList: DownloadMoveList,
     private val json: Json,
 ): WavuWikiClient {
     private var database: MutableMap<String, Map<String, Move>> = mutableMapOf()
@@ -65,7 +63,7 @@ internal class WavuWikiClientImpl(
 
     //TODO: should return a Result
     private suspend fun fetchMoveListFor(character: Character): Map<String, Move>? {
-        val result = fetchMoveListUseCase.execute(character.name)
+        val result = downloadMoveList.execute(character.name)
         return when (result) {
             is Result.Success -> {
                 result.data
