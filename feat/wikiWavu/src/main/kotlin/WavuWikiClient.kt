@@ -1,36 +1,50 @@
+import com.example.core.domain.EmptyResult
 import com.example.core.domain.Result
 import com.example.core.domain.Service
 import com.example.core.domain.Source
-import domain.FetchMoveListUseCase
+import com.example.core.domain.onError
+import com.example.core.domain.onSuccess
+import domain.usecase.FetchMoveListUseCase
 import domain.WavuError
 import domain.model.Character
 import domain.model.CharacterList
 import domain.model.Move
+import domain.usecase.FetchCharacterListUseCase
 import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.Json
 import java.io.File
 
 interface WavuWikiClient: Service {
-    suspend fun fetchCompleteMoveList()
+    suspend fun fetchCompleteMoveList(): EmptyResult<WavuError>
     fun frameDataFor(charName: String, move: String): Result<Move, WavuError>
 }
 
 internal class WavuWikiClientImpl(
+    private val fetchCharacterListUseCase: FetchCharacterListUseCase,
     private val fetchMoveListUseCase: FetchMoveListUseCase,
     private val json: Json,
 ): WavuWikiClient {
     private var database: MutableMap<String, Map<String, Move>> = mutableMapOf()
 
-    override suspend fun fetchCompleteMoveList() {
-        fetchCharacters().forEach { character ->
-            fetchMoveListFor(character)?.let { moveList ->
-                insertMoveListIntoDatabase(
-                    character = character,
-                    moveList = moveList
-                )
-                Napier.d(tag = TAG) {
-                    "${moveList.size} moves for ${character.name} (${character.alias}) added"
+    override suspend fun fetchCompleteMoveList(): EmptyResult<WavuError> {
+        return when (val result = fetchCharacterListUseCase.invoke()) {
+            is Result.Success -> {
+                result.data.characterList.forEach { character ->
+                    fetchMoveListFor(character)?.let { moveList ->
+                        insertMoveListIntoDatabase(
+                            character = character,
+                            moveList = moveList
+                        )
+                        Napier.d(tag = TAG) {
+                            "${moveList.size} moves for ${character.name} (${character.alias}) added"
+                        }
+                    }
                 }
+
+                Result.Success(Unit)
+            }
+            is Result.Error -> {
+                Result.Error(result.error)
             }
         }
     }
@@ -64,6 +78,7 @@ internal class WavuWikiClientImpl(
     }
 
     //TODO: ConfigRepo
+    //TODO: new character.json
     private fun fetchCharacters(): List<Character> {
         val configFile = File(CONFIG_FILE)
         val charList = json.decodeFromString<CharacterList>(configFile.readText())

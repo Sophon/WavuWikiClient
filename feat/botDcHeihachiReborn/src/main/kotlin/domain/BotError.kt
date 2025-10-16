@@ -8,4 +8,5 @@ enum class BotError: Error {
     UNKNOWN_MOVE,
     EMPTY_GLOSSARY,
     GLOSSARY_TERM_NOT_FOUND,
+    CHARACTER_LIST_FILE_ERROR,
 }

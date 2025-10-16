@@ -1,4 +1,4 @@
-package domain
+package domain.usecase
 
 import com.example.core.domain.DataError
 import com.example.core.domain.Result

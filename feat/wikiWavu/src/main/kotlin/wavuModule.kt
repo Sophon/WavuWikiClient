@@ -1,7 +1,8 @@
 import com.example.core.coreModule
 import data.WavuWikiDataSource
 import data.WavuWikiDataSourceImpl
-import domain.FetchMoveListUseCase
+import domain.usecase.FetchCharacterListUseCase
+import domain.usecase.FetchMoveListUseCase
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
@@ -19,6 +20,7 @@ fun initKoin(config: KoinAppDeclaration? = null) = startKoin {
 
 val wavuModule = module {
     singleOf(::WavuWikiDataSourceImpl).bind<WavuWikiDataSource>()
+    singleOf(::FetchCharacterListUseCase)
     singleOf(::FetchMoveListUseCase)
     singleOf(::WavuWikiClientImpl).bind<WavuWikiClient>()
 }

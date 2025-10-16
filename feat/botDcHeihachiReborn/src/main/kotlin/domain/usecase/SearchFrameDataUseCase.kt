@@ -22,6 +22,9 @@ internal class SearchFrameDataUseCase(
                 when (result.error) {
                     WavuError.UNKNOWN_CHARACTER -> BotError.UNKNOWN_CHARACTER
                     WavuError.UNKNOWN_MOVE -> BotError.UNKNOWN_MOVE
+                    WavuError.CHARACTER_LIST_NOT_FOUND,
+                    WavuError.CHARACTER_SERIALIZATION_ERROR,
+                        -> BotError.CHARACTER_LIST_FILE_ERROR
                 }
             )
         }
