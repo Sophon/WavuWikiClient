@@ -21,7 +21,7 @@ A shared code-base with various tools:
 - Twitch bot
 
 ___
-## Code-base structure
+# Code-base structure
 TODO: Mermaid diagram
 
 ___
