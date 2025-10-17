@@ -1,8 +1,6 @@
 package domain.usecase
 
-import com.example.core.domain.DataError
 import com.example.core.domain.Result
-import com.example.core.domain.map
 import data.remote.InfilGlossaryDataSource
 import domain.GlossaryError
 import domain.GlossaryItem

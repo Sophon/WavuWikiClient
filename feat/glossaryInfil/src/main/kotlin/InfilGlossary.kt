@@ -2,17 +2,12 @@ import com.example.core.domain.EmptyResult
 import com.example.core.domain.Result
 import com.example.core.domain.Service
 import com.example.core.domain.Source
-import com.example.core.domain.map
-import com.example.core.domain.onError
-import com.example.core.domain.onSuccess
-import com.example.core.util.removeWhiteSpace
-import domain.usecase.DownloadGlossaryUseCase
 import domain.GlossaryError
 import domain.GlossaryItem
 import domain.usecase.CacheGlossaryUseCase
+import domain.usecase.DownloadGlossaryUseCase
 import domain.usecase.FetchDataForTermUseCase
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.flow.MutableStateFlow
 
 interface InfilGlossary: Service {
     suspend fun downloadGlossary(): EmptyResult<GlossaryError>

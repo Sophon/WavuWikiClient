@@ -1,7 +1,6 @@
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.getKoin
 
 suspend fun main() = coroutineScope {
