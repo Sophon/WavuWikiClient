@@ -6,6 +6,6 @@ class StartGlossaryUseCase(
     private val glossary: InfilGlossary,
 ) {
     suspend fun invoke() {
-        glossary.fetchGlossary()
+        glossary.downloadGlossary()
     }
 }

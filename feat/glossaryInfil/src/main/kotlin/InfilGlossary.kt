@@ -1,76 +1,47 @@
+import com.example.core.domain.EmptyResult
 import com.example.core.domain.Result
 import com.example.core.domain.Service
 import com.example.core.domain.Source
+import com.example.core.domain.map
 import com.example.core.domain.onError
 import com.example.core.domain.onSuccess
 import com.example.core.util.removeWhiteSpace
-import domain.GetGlossaryUseCase
+import domain.usecase.DownloadGlossaryUseCase
 import domain.GlossaryError
 import domain.GlossaryItem
+import domain.usecase.CacheGlossaryUseCase
+import domain.usecase.FetchDataForTermUseCase
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 interface InfilGlossary: Service {
-    suspend fun subscribe(): Flow<String>
-    suspend fun fetchGlossary()
-    fun search(query: String): Result<List<GlossaryItem>, GlossaryError>
+    suspend fun downloadGlossary(): EmptyResult<GlossaryError>
+    suspend fun search(query: String): Result<List<GlossaryItem>, GlossaryError>
 }
 
 internal class InfilGlossaryImpl(
-    private val getGlossaryUseCase: GetGlossaryUseCase,
+    private val downloadGlossaryUseCase: DownloadGlossaryUseCase,
+    private val cacheGlossaryUseCase: CacheGlossaryUseCase,
+    private val fetchDataForTermUseCase: FetchDataForTermUseCase,
 ): InfilGlossary {
-    private val outputStream = MutableStateFlow("")
-    private var glossary: Map<String, GlossaryItem> = emptyMap()
 
-    override suspend fun subscribe(): Flow<String> {
-        val string = "Starting Infil Glossary"
-        Napier.d(tag = TAG, message = string)
-
-        return outputStream.apply {
-            emit(string)
+    override suspend fun downloadGlossary(): EmptyResult<GlossaryError> {
+        return when (val result = downloadGlossaryUseCase.invoke()) {
+            is Result.Success -> {
+                cacheGlossaryUseCase.invoke(result.data)
+                Napier.d(tag = TAG) { "Successfully retrieved glossary; ${result.data.size} keys" }
+                Result.Success(Unit)
+            }
+            is Result.Error -> {
+                Napier.e(tag = TAG) { result.error.toString() }
+                Result.Error(result.error)
+            }
         }
     }
 
-    override suspend fun fetchGlossary() {
-        Napier.d(tag = TAG) { "Fetching glossary" }
-
-        getGlossaryUseCase.execute()
-            .onSuccess { items ->
-                glossary = buildMap {
-                    items.forEach { item ->
-                        put(item.term, item) //use main term
-                        item.altTerm.forEach { alt -> //alt term
-                            put(alt, item)
-                        }
-                    }
-                }
-                Napier.d(tag = TAG) { "Successfully retrieved glossary; ${items.size} keys" }
-            }
-            .onError { errorType ->
-                Napier.e(tag = TAG) { "Error: $errorType" }
-                outputStream.emit("Error: $errorType")
-            }
-    }
-
-    override fun search(query: String): Result<List<GlossaryItem>, GlossaryError> {
-        if (glossary.isEmpty()) return Result.Error(GlossaryError.EMPTY_GLOSSARY)
-
+    override suspend fun search(query: String): Result<List<GlossaryItem>, GlossaryError> {
         Napier.d(tag = TAG) { "Query: $query" }
-
-        val result = glossary.entries
-            .filter {
-                it.key.contains(query, ignoreCase = true)
-                        || it.key.contains(query.removeWhiteSpace(), ignoreCase = true)
-            }
-            .map { it.value }
-            .distinctBy { it.term }
-            .sortedByDescending {
-                it.term.equals(query, ignoreCase = true) ||
-                        it.term.equals(query.removeWhiteSpace(), ignoreCase = true)
-            }
-
-        return Result.Success(result)
+        return fetchDataForTermUseCase.invoke(query)
     }
 
     override fun source(): Source {

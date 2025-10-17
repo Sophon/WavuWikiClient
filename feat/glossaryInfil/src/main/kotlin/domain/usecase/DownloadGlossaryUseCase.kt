@@ -1,17 +1,19 @@
-package domain
+package domain.usecase
 
 import com.example.core.domain.DataError
 import com.example.core.domain.Result
 import com.example.core.domain.map
-import data.InfilGlossaryDataSource
+import data.remote.InfilGlossaryDataSource
+import domain.GlossaryError
+import domain.GlossaryItem
 
-internal class GetGlossaryUseCase(
+internal class DownloadGlossaryUseCase(
     private val dataSource: InfilGlossaryDataSource,
 ) {
-    suspend fun execute(): Result<List<GlossaryItem>, DataError.Remote> {
-        return dataSource.getGlossary()
-            .map { items ->
-                items.map { item ->
+    suspend fun invoke(): Result<List<GlossaryItem>, GlossaryError> {
+        return when (val result = dataSource.getGlossary()) {
+            is Result.Success -> {
+                val data = result.data.map { item ->
                     GlossaryItem(
                         term = item.term,
                         definition = item.def,
@@ -23,6 +25,12 @@ internal class GetGlossaryUseCase(
                             ?: listOf()
                     )
                 }
+
+                Result.Success(data)
             }
+            is Result.Error -> {
+                Result.Error(GlossaryError.ERROR_DOWNLOADING_DATA)
+            }
+        }
     }
 }

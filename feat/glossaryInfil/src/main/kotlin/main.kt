@@ -10,12 +10,5 @@ suspend fun main() = coroutineScope {
 
     val infilGlossary = getKoin().get<InfilGlossary>()
 
-    launch {
-        infilGlossary.subscribe()
-            .collect {
-                println(it)
-            }
-    }
-
-    infilGlossary.fetchGlossary()
+    val job = infilGlossary.downloadGlossary()
 }
