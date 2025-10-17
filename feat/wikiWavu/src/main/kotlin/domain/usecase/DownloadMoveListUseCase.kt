@@ -28,7 +28,8 @@ internal class DownloadMoveListUseCase(
                         move.copy(
                             input = move.id.substringAfter("-"),
                             level = formCompleteDataFromParent(move, movesById) { it.level },
-                            damage = formCompleteDataFromParent(move, movesById) { it.damage }
+                            damage = formCompleteDataFromParent(move, movesById) { it.damage },
+                            startup = getRootStartup(move, movesById),
                         )
                     }
                     .mapKeys { (id, _) ->
@@ -84,5 +85,21 @@ internal class DownloadMoveListUseCase(
             .reversed()
             .joinToString("")
             .takeIf { it.isNotEmpty() }
+    }
+
+    /**
+     * Similar to the issue above, just with startup
+     */
+    private fun getRootStartup(move: Move, movesById: Map<String, Move>): String? {
+        var current: Move? = move
+        var root: Move = move
+
+        // Traverse up to find the topmost parent
+        while (current != null) {
+            root = current
+            current = current.parent?.let { movesById[it] }
+        }
+
+        return root.startup
     }
 }
