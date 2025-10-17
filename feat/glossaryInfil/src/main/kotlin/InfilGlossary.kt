@@ -2,11 +2,10 @@ import com.example.core.domain.EmptyResult
 import com.example.core.domain.Result
 import com.example.core.domain.Service
 import com.example.core.domain.Source
-import domain.GlossaryError
-import domain.GlossaryItem
-import domain.usecase.CacheGlossaryUseCase
-import domain.usecase.DownloadGlossaryUseCase
-import domain.usecase.FetchDataForTermUseCase
+import model.GlossaryItem
+import usecase.CacheGlossaryUseCase
+import usecase.DownloadGlossaryUseCase
+import usecase.FetchDataForTermUseCase
 import io.github.aakira.napier.Napier
 
 interface InfilGlossary: Service {

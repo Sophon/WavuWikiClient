@@ -1,8 +1,8 @@
 import dev.kord.common.Color
 import dev.kord.rest.builder.message.EmbedBuilder
-import domain.BotError
-import domain.GlossaryItem
-import domain.model.Move
+import BotError
+import model.GlossaryItem
+import model.Move
 
 class EmbedBuilder {
     fun testEmbed(): EmbedBuilder.() -> Unit = {

@@ -3,12 +3,11 @@ import com.example.core.domain.Result
 import com.example.core.domain.Service
 import com.example.core.domain.Source
 import com.example.core.domain.onError
-import domain.WavuError
-import domain.model.Move
-import domain.usecase.CacheMoveListUseCase
-import domain.usecase.DownloadMoveListUseCase
-import domain.usecase.FetchCharacterListUseCase
-import domain.usecase.FetchMoveDataUseCase
+import model.Move
+import usecase.CacheMoveListUseCase
+import usecase.DownloadMoveListUseCase
+import usecase.FetchCharacterListUseCase
+import usecase.FetchMoveDataUseCase
 import io.github.aakira.napier.Napier
 
 interface WavuWikiClient: Service {

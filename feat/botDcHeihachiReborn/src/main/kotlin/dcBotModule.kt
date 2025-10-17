@@ -1,8 +1,8 @@
 import com.example.core.coreModule
-import domain.usecase.SearchFrameDataUseCase
-import domain.usecase.SearchGlossaryUseCase
-import domain.usecase.StartGlossaryUseCase
-import domain.usecase.StartWikiUseCase
+import usecase.SearchFrameDataUseCase
+import usecase.SearchGlossaryUseCase
+import usecase.StartGlossaryUseCase
+import usecase.StartWikiUseCase
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
