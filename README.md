@@ -13,6 +13,8 @@ A shared code-base with various tools:
       - moves that are the same start-up or faster
     - `/heat` command
       - for Heat Engagers and Heat Dash moves
+    - `/pc` command
+      - for power crushes
   - `/feedback` command
     - also banlist
   - reaction commands for Discord embeds
@@ -26,6 +28,7 @@ A shared code-base with various tools:
 - Twitch bot
 - Docker, pipelines, updates
 - frame data for older games
+- Wank Wavu functionality
 
 ___
 # Code-base structure
