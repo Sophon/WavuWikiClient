@@ -3,6 +3,7 @@ package usecase
 import com.example.core.domain.Result
 import dataLocal.MoveListDB
 import WavuError
+import cleanMoveInput
 import model.Move
 
 class FetchMoveDataUseCase(
@@ -12,6 +13,9 @@ class FetchMoveDataUseCase(
         charName: String,
         moveQuery: String
     ): Result<Move, WavuError> {
-        return db.fetchMoveDataFor(charName, moveQuery)
+        return db.fetchMoveDataFor(
+            charName = charName,
+            moveQuery = moveQuery.cleanMoveInput(),
+        )
     }
 }

@@ -1,5 +1,7 @@
 package usecase
 
+import cleanHtml
+import cleanMoveInput
 import com.example.core.domain.DataError
 import com.example.core.domain.Result
 import com.example.core.domain.map
@@ -19,7 +21,7 @@ internal class DownloadMoveListUseCase(
                         move.copy(
                             notes = move.notes
                                 ?.cleanHtml()
-                                ?.replace("\n\n", "\n")
+                                ?.replace("\n\n", "\n"),
                         )
                     }
                     .associateBy { it.id }
@@ -34,30 +36,11 @@ internal class DownloadMoveListUseCase(
                         )
                     }
                     .mapKeys { (id, _) ->
-                        id.substringAfter("-")
+                        id
+                            .substringAfter("-")
+                            .cleanMoveInput()
                     }
             }
-    }
-
-    private fun String.cleanHtml(): String {
-        return this
-            .decodeHtmlEntities()
-            .removeHtmlTags()
-            .replace(Regex("\\*\\s*\\n"), "* ")
-            .trim()
-    }
-
-    private fun String.decodeHtmlEntities(): String {
-        return this
-            .replace("&lt;", "<")
-            .replace("&gt;", ">")
-            .replace("&quot;", "\"")
-            .replace("&amp;", "&")
-            .replace("&nbsp;", " ")
-    }
-
-    private fun String.removeHtmlTags(): String {
-        return this.replace(Regex("<[^>]*>"), "")
     }
 
     /**
