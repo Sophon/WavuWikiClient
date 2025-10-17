@@ -1,16 +1,16 @@
-package domain
+package domain.usecase
 
 import com.example.core.domain.DataError
 import com.example.core.domain.Result
 import com.example.core.domain.map
-import data.WavuWikiDataSource
+import data.remote.WavuWikiDataSource
 import domain.model.Move
 
-internal class FetchMoveListUseCase(
+internal class DownloadMoveListUseCase(
     private val source: WavuWikiDataSource,
 ) {
-    suspend fun execute(char: String): Result<Map<String, Move>, DataError.Remote> {
-        return source.fetchMoveList(char)
+    suspend fun invoke(charName: String): Result<Map<String, Move>, DataError.Remote> {
+        return source.fetchMoveList(charName)
             .map { dto -> dto.cargoQuery.map { it.title } }
             .map { moves ->
                 moves

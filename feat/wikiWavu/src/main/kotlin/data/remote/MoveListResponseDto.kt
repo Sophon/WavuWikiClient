@@ -1,4 +1,4 @@
-package data
+package data.remote
 
 import domain.model.Move
 import kotlinx.serialization.SerialName
