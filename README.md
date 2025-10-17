@@ -14,7 +14,9 @@ A shared code-base with various tools:
     - `/heat` command
       - for Heat Engagers and Heat Dash moves
   - `/feedback` command
+    - also banlist
   - reaction commands for Discord embeds
+  - bot version
 - mobile client
 - documentation
   - Mermaid diagram and description for code-base structure
@@ -23,6 +25,7 @@ A shared code-base with various tools:
 ### Long term goals:
 - Twitch bot
 - Docker, pipelines, updates
+- frame data for older games
 
 ___
 # Code-base structure
