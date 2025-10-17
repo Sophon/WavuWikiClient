@@ -18,6 +18,7 @@ fun String.cleanMoveInput(): String {
         "fff" to "wr",
         "ra+" to "ra",
         "ss+" to "ss",
+        "ss." to "ss",
         "*+" to "*",
         "ws." to "ws",
         "fc." to "fc"
