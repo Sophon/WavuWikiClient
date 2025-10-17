@@ -16,9 +16,13 @@ A shared code-base with various tools:
   - `/feedback` command
   - reaction commands for Discord embeds
 - mobile client
+- documentation
+  - Mermaid diagram and description for code-base structure
+  - guide on running the Discord bot 
 
 ### Long term goals:
 - Twitch bot
+- Docker, pipelines, updates
 
 ___
 # Code-base structure
