@@ -1,11 +1,11 @@
-### A set of tools for Tekken 8
+# A set of tools for Tekken 8
 
 A shared code-base with various tools:
 - fighting-game glossary (from [Infil](https://glossary.infil.net/))
 - frame data (from [Wavu Wiki](https://wavu.wiki/))
 - Discord bot
 
-# TODO's:
+### TODO's:
 - Discord bot
   - frame data
     - `/fd` command
@@ -17,12 +17,14 @@ A shared code-base with various tools:
   - reaction commands for Discord embeds
 - mobile client
 
-# Long term goals:
+### Long term goals:
 - Twitch bot
 
 ___
-# Code-base structure
+## Code-base structure
 TODO: Mermaid diagram
+
+___
 
 * [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
