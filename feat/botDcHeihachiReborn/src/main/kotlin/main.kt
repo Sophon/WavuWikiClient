@@ -1,4 +1,4 @@
-import domain.DcConfig
+import config.DcConfig
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.coroutineScope
