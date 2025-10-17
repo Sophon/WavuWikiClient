@@ -2,6 +2,7 @@ import com.example.core.domain.EmptyResult
 import com.example.core.domain.Result
 import com.example.core.domain.Service
 import com.example.core.domain.Source
+import com.example.core.domain.onError
 import domain.WavuError
 import domain.model.Move
 import domain.usecase.CacheMoveListUseCase
@@ -52,6 +53,7 @@ internal class WavuWikiClientImpl(
         moveQuery: String
     ): Result<Move, WavuError> {
         return fetchMoveDataUseCase.invoke(charName, moveQuery)
+            .onError { Napier.e(tag = TAG) { it.toString() } }
     }
 
     override fun source(): Source {
