@@ -1,4 +1,28 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
+### A set of tools for Tekken 8
+
+A shared code-base with various tools:
+- fighting-game glossary (from [Infil](https://glossary.infil.net/))
+- frame data (from [Wavu Wiki](https://wavu.wiki/))
+- Discord bot
+
+# TODO's:
+- Discord bot
+  - frame data
+    - `/fd` command
+    - `/ms` command 
+      - moves that are the same start-up or faster
+    - `/heat` command
+      - for Heat Engagers and Heat Dash moves
+  - `/feedback` command
+  - reaction commands for Discord embeds
+- mobile client
+
+# Long term goals:
+- Twitch bot
+
+___
+# Code-base structure
+TODO: Mermaid diagram
 
 * [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
@@ -44,5 +68,3 @@ To build and run the development version of the iOS app, use the run configurati
 in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
 
 ---
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
